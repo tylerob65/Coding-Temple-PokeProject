@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Login</h1>
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.username(class='form-control', placeholder='Username') }}
+    <br>
+    {{ form.password(class='form-control', placeholder='Password') }}
+    <br>
+    {{ form.submit(class='btn btn-danger') }}
+</form>
+
+{% if login_issue %}
+<br>
+<p>Sorry, that was non a valid username/password, please try again</p>
+<p>If you don't have an account, you can <a class = "signuplink" href="{{url_for('signupPage')}}">sign up here</a></p>
+
+{% endif %}
+
+
+{% endblock %}
