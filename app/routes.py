@@ -1,5 +1,6 @@
 from app import app
 from app.forms import PokeSearchForm
+from app.models import User
 from flask import redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from app.thepokedex import Pokedex
@@ -15,6 +16,11 @@ def homePage():
 @login_required
 def pokeSearchPage():
     form = PokeSearchForm()
+
+    
+    # Test to see if I could get and set roster
+    # current_user.setRoster([None,None,None,None,None],commit=True)
+    # print(current_user.getRoster())
 
     if request.method == 'GET':
         return render_template('pokesearch.html',form=form)

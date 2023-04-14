@@ -3,6 +3,7 @@ from app.models import User
 from email_validator import EmailNotValidError, validate_email
 from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import login_user, logout_user
+from app.thepokedex import Pokedex
 
 auth = Blueprint('auth',__name__,template_folder='auth_templates')
 
@@ -34,8 +35,13 @@ def signupPage():
     if User.query.filter_by(email=email).first():
         return render_template('signup.html',form=form,existing_email=True)
 
+
     # Instantiates user
     user = User(username, email,first_name,last_name,password)
+
+    # Gives user random pokemon
+    random_pokemon = Pokedex.pick_random_pokemon(5)
+    user.setRoster(random_pokemon)
 
     # Saves the user to the database
     user.saveToDB()

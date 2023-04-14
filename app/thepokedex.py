@@ -1,6 +1,7 @@
 from thefuzz import process as fuzzprocess
 import json
 import os
+import random
 import requests
 
 # SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
@@ -9,6 +10,7 @@ import requests
 
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 my_url = SITE_ROOT + "/static/pokedex.json"
+
 with open(my_url) as f:
     names2nums = json.load(f)
 
@@ -50,3 +52,14 @@ class Pokedex():
                 "hp base stat":data['stats'][0]['base_stat'],
                 "defense stat":data['stats'][2]["base_stat"]}
         return poke_dict
+    
+    def pick_random_pokemon(amount,off_limits=[]):
+        pokelist = list(nums2names.keys())
+        output = []
+        while len(output) < amount:
+            pokemon = random.choice(pokelist)
+            print(pokemon)
+            if pokemon in off_limits or pokemon in output:
+                continue
+            output.append(pokemon)
+        return output
