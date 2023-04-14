@@ -3,6 +3,7 @@ from config import Config
 from flask import Flask
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from app.auth.auth_routes import auth
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -16,8 +17,9 @@ login_manager = LoginManager(app)
 def load_user(user_id):
     return User.query.get(user_id)
 
-login_manager.login_view = 'loginPage'
+login_manager.login_view = 'auth.loginPage'
 
+app.register_blueprint(auth)
 # SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 # my_url = SITE_ROOT + "/static/pokedex.json"
 # print(my_url)
