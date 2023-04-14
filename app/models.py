@@ -1,22 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from datetime import datetime
-import json, os
 
 # Instantiate the database
 db = SQLAlchemy()
-
-# SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-# my_url = SITE_ROOT + "/static/pokedex.json"
-# pokedex = json.load(open(my_url))
-
-SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-my_url = SITE_ROOT + "/static/pokedex.json"
-with open(my_url) as f:
-    pokedex = json.load(f)
-
-class Pokedex():
-    dex = pokedex
 
 class User(db.Model,UserMixin):
     id = db.Column(db.Integer,primary_key=True)

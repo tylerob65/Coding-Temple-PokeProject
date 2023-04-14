@@ -20,11 +20,6 @@ def load_user(user_id):
 login_manager.login_view = 'auth.loginPage'
 
 app.register_blueprint(auth)
-# SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-# my_url = SITE_ROOT + "/static/pokedex.json"
-# print(my_url)
-# pokedex = json.load(open(my_url))
-# g.pokedex = pokedex
 
 from . import routes
 from . import models
