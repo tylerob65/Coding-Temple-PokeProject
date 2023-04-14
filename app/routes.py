@@ -37,7 +37,16 @@ def pokeSearchPage():
         return render_template('pokesearch.html',form=form,not_valid_pokemon = pokemon_name,pokeguess=pokeguess)
 
 
-
+@app.route('/myprofile',methods=["GET"])
+@login_required
+def myProfilePage():
+    
+    poke_results_group = []
+    for poke_id in current_user.getRoster():
+        pokemon_name = Pokedex.nums2names[poke_id]
+        poke_results_group.append(Pokedex.find_poke(pokemon_name))
+    
+    return render_template('my_profile.html',poke_results_group=poke_results_group)
     
 
 
