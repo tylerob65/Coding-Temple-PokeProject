@@ -26,11 +26,11 @@
     <tbody>
         {% for user in all_users %}
         <tr>
-        <td><a href="{{url_for('showProfile',user_id=user.id)}}">{{user.username}}</a></td>
+        <td><a class ="poke_link" href="{{url_for('showProfile',user_id=user.id)}}">{{user.username}}</a></td>
         <td>
             {% for pokemon in user.getRosterNumsAndNames() %}
-            <a class="link_no_underline" href="{{url_for('pokeSearchPage',pokemon_id=pokemon[0])}}">
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{pokemon[0]}}.png"style="width:50px" data-bs-toggle="tooltip" data-bs-title="{{pokemon[1]}}"alt="">
+            <a class="text-decoration-none" href="{{url_for('pokeSearchPage',pokemon_id=pokemon[0])}}">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{pokemon[0]}}.png"style="width:50px" data-bs-toggle="tooltip" data-bs-title="{{pokemon[1]}}" alt="" data-bs-custom-class="custom-tooltip">
             </a>
             {% endfor %}
         </td>
