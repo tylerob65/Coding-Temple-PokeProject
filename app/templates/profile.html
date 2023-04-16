@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>{{username}}'s Pr<img id="pball" src="{{ url_for('static', filename='pokeball.png') }}"
+        alt="Pokeball from 'https://www.freepnglogos.com/uploads/pokeball-png/pokeball-pokemon-theme-team-ideas-for-pokemon-sun-and-moon-24.png'">file
+</h1>
+
+{% if form %}
+<!-- <form method="POST">
+    
+    {{ form.hidden_tag() }}
+    {{ form.pokemon_name(class='form-control',placeholder='Enter Pokemon Name')}}
+    <br>
+    <div class="text-center">{{ form.submit(class='btn btn-danger text-center') }}</div>
+</form> -->
+{% endif %}
+
+<br>
+
+{% if poke_results_group %}
+<h3>Here are {{username}}'s pokemon!</h3>
+<div class="multicard-display">
+    {% for poke_results in poke_results_group %}
+    <div class="card-holder">
+        <div class="card" style="width: 18rem;">
+            <img src="{{poke_results['photo']}}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title"><b>{{poke_results['name']}}</b> <small>(#{{poke_results['poke_id']}})</small></h5>
+                <p class="card-text card-stats">Ability: <span style="float:right">{{poke_results['ability']}}</span></p>
+                <p class="card-text card-stats">Base Experience: <span style="float:right">{{poke_results['base experience']}}</span></p>
+                <p class="card-text card-stats">Attack Base Stat: <span style="float:right">{{poke_results['attack base stat']}}</span></p>
+                <p class="card-text card-stats">Defense Base Stat: <span style="float:right">{{poke_results['defense stat']}}</span></p>
+                <p class="card-text card-stats">HP Base Stat: <span style="float:right">{{poke_results['hp base stat']}}</span></p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+{% endblock %}

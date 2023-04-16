@@ -19,6 +19,7 @@
 
 {% if poke_results_group %}
 <h3>Here are your pokemon!</h3>
+<div class="multicard-display">
 {% for poke_results in poke_results_group %}
 <div class="card-holder">
     <div class="card" style="width: 18rem;">
@@ -33,9 +34,8 @@
         </div>
     </div>
 </div>
-
-<br>
 {% endfor %}
+</div>
 {% endif %}
 
 

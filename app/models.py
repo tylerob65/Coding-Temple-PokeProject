@@ -1,6 +1,7 @@
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
-from datetime import datetime
+from app.thepokedex import Pokedex
 
 # Instantiate the database
 db = SQLAlchemy()
@@ -47,3 +48,21 @@ class User(db.Model,UserMixin):
 
     def getRoster(self):
         return [self.poke_slot1,self.poke_slot2,self.poke_slot3,self.poke_slot4,self.poke_slot5]
+    
+    def getRosterNames(self):
+        roster_names = []
+        for pokemon_num in self.getRoster():
+            roster_names.append(Pokedex.nums2names[pokemon_num])
+        return roster_names
+    
+    def getRosterNumsAndNames(self):
+        output = [
+            (self.poke_slot1,Pokedex.nums2names[self.poke_slot1]),
+            (self.poke_slot2,Pokedex.nums2names[self.poke_slot2]),
+            (self.poke_slot3,Pokedex.nums2names[self.poke_slot3]),
+            (self.poke_slot4,Pokedex.nums2names[self.poke_slot4]),
+            (self.poke_slot5,Pokedex.nums2names[self.poke_slot5]),
+        ]
+        return output
+        
+

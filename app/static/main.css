@@ -2,10 +2,11 @@
     --main_red: #dc3545;
     --main_red_nums: 220, 53, 69;
 }
-#card-holder {
+.card-holder {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     flex-wrap: wrap;
+    margin: 10px;
 }
 .form-control:focus {
     border-color:var(--main_red);
@@ -59,4 +60,12 @@ footer {
 
 .signuplink {
     color:var(--main_red);
+}
+
+.multicard-display {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
 }
