@@ -82,14 +82,20 @@ def myProfilePage():
 @app.route('/runcode',methods=['GET'])
 def runCode():
     # Used to test short bits of code
+    
 
     # random_pokemon = Pokedex.pick_random_pokemon(5)
     # current_user.setRoster(random_pokemon)
     # current_user.saveToDB()
     all_users = User.query.all()
-    pokemon_list = []
-    for user in all_users:
-        pokemon_list.append(list(zip(user.getRoster(),user.getRosterNames())))
+    for user in  all_users:
+        random_pokemon = Pokedex.pick_random_pokemon(5)
+        user.setRoster(random_pokemon)
+        user.saveToDB()
+
+    # pokemon_list = []
+    # for user in all_users:
+    #     pokemon_list.append(list(zip(user.getRoster(),user.getRosterNames())))
 
     print(all_users)
     print(pokemon_list)

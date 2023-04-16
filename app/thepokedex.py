@@ -51,6 +51,8 @@ class Pokedex():
                 "attack base stat": data['stats'][1]['base_stat'],
                 "hp base stat":data['stats'][0]['base_stat'],
                 "defense stat":data['stats'][2]["base_stat"]}
+        if not poke_dict['photo']:
+            poke_dict['photo'] = data['sprites']['other']['official-artwork']["front_default"]
         return poke_dict
     
     def pick_random_pokemon(amount,off_limits=[]):
