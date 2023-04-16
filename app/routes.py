@@ -13,18 +13,38 @@ def homePage():
 
     return render_template('index.html')
 
+
+# @app.route("/pokesearch/<int:pokemon_id>")
+# @login_required
+# def pokeSearcher(pokemon_id):
+#     pokemon_name = Pokedex.nums2names[pokemon_id]
+#     print(pokemon_name)
+#     return redirect(url_for('pokeSearchPage',pokemon_name=pokemon_name))
+
+
 @app.route('/pokesearch',methods=["GET","POST"])
+@app.route('/pokesearch/<int:pokemon_id>',methods=["GET","POST"])
 @login_required
-def pokeSearchPage():
+def pokeSearchPage(pokemon_id=None):
     form = PokeSearchForm()
 
-    
+    # print(pokemon_name)
     # Test to see if I could get and set roster
     # current_user.setRoster([None,None,None,None,None],commit=True)
     # print(current_user.getRoster())
+    print(pokemon_id)
 
     if request.method == 'GET':
-        return render_template('pokesearch.html',form=form)
+        if not pokemon_id:
+            return render_template('pokesearch.html',form=form)
+        
+        pokemon_name = Pokedex.nums2names[pokemon_id]
+        poke_results = Pokedex.find_poke(pokemon_name)
+        print(poke_results)
+        return render_template('pokesearch.html',form=form,poke_results=poke_results)
+
+        
+
 
     if not form.validate():
         return render_template('pokesearch.html',form=form,poke_results=poke_results)
@@ -34,7 +54,8 @@ def pokeSearchPage():
     if poke_results:
         return render_template('pokesearch.html',form=form,poke_results=poke_results)
     else:
-        pokeguess = Pokedex.poke_suggest(pokemon_name)
+        pokeguess_name = Pokedex.poke_suggest(pokemon_name)
+        pokeguess = (pokeguess_name,Pokedex.names2nums[pokeguess_name])
         return render_template('pokesearch.html',form=form,not_valid_pokemon = pokemon_name,pokeguess=pokeguess)
 
 

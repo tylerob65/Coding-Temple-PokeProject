@@ -19,7 +19,8 @@
 <p>Sorry, "{{not_valid_pokemon}}" is not a valid Pokemon</p>
 {% endif %}
 {% if pokeguess %}
-<p>Did you mean to type "{{pokeguess}}"?</p>
+<p>Did you mean to type "<a class = "poke_link" href="{{url_for('pokeSearchPage',pokemon_id=pokeguess[1])}}">{{pokeguess[0]}}</a>"?</p>
+
 {% endif %}
 {% if not_valid_form %}
 <p>You submitted an invalid form, please try again</p>

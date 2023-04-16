@@ -69,3 +69,11 @@ footer {
     justify-content: space-around;
     align-items: center;
 }
+
+.poke_link {
+    color: var(--main_red);
+}
+
+.link_no_underline{
+    text-decoration: none;
+}
