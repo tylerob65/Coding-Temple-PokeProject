@@ -22,6 +22,15 @@ def homePage():
 #     return redirect(url_for('pokeSearchPage',pokemon_name=pokemon_name))
 
 
+@app.route('/shuffleroster',methods=["GET","POST"])
+@login_required
+def shuffleRoster():
+    random_pokemon = Pokedex.pick_random_pokemon(5)
+    current_user.setRoster(random_pokemon)
+    current_user.saveToDB()
+    return redirect('myprofile')
+
+
 @app.route('/pokesearch',methods=["GET","POST"])
 @app.route('/pokesearch/<int:pokemon_id>',methods=["GET","POST"])
 @login_required
