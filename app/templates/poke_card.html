@@ -1,8 +1,8 @@
 <div class="card-holder">
-    <div class="card" style="width: 18rem;">
+    <div class="card">
         <img src="{{poke_results['photo']}}" class="card-img-top" alt="...">
         <div class="card-body">
-            <h5 class="card-title"><b>{{poke_results['name']}}</b> <small>(#{{poke_results['poke_id']}})</small></h5>
+            <h5 class="card-title"><b>{{poke_results['name'].title()}}</b> <small>(#{{poke_results['poke_id']}})</small></h5>
             <p class="card-text card-stats">HP: <span style="float:right">{{poke_results['hp']}}</span></p>
             <p class="card-text card-stats">Attack: <span style="float:right">{{poke_results['attack']}}</span></p>
             <p class="card-text card-stats">Defense: <span style="float:right">{{poke_results['defense']}}</span></p>

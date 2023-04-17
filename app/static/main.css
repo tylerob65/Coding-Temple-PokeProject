@@ -27,6 +27,7 @@
 
 .card {
     margin:auto;
+    width: 14rem;
 }
 
 small {
@@ -95,4 +96,8 @@ footer {
 .profile-button p {
     margin: 0;
     padding: 0;
+}
+
+.card {
+    width:14rem;
 }

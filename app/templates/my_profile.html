@@ -3,7 +3,7 @@
 
 <h1>My Pr<img id="pball" src="{{ url_for('static', filename='pokeball.png') }}"
         alt="Pokeball from 'https://www.freepnglogos.com/uploads/pokeball-png/pokeball-pokemon-theme-team-ideas-for-pokemon-sun-and-moon-24.png'">file</h1>
-<p>Welcome <b> {{current_user.username}}</b>!</p>
+<h2>Welcome <b> {{current_user.username}}</b>!</h2>
 
 {% if form %}
 <!-- <form method="POST">
@@ -15,10 +15,8 @@
 </form> -->
 {% endif %}
 
-<br>
-
 {% if poke_results_group %}
-<h3>Here are your pokemon!</h3>
+<h3>Here are your pokemon...</h3>
 <div class="multicard-display">
 {% for poke_results in poke_results_group %}
 
