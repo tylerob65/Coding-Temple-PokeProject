@@ -28,11 +28,6 @@ def shuffleRoster():
 def pokeSearchPage(pokemon_id=None):
     form = PokeSearchForm()
 
-    # print(pokemon_name)
-    # Test to see if I could get and set roster
-    # current_user.setRoster([None,None,None,None,None],commit=True)
-    # print(current_user.getRoster())
-
     if request.method == 'GET':
         if not pokemon_id:
             return render_template('pokesearch.html',form=form)
@@ -70,31 +65,12 @@ def myProfilePage():
 def runCode():
     # Used to test short bits of code
     
-
-    # random_pokemon = Pokedex.pick_random_pokemon(5)
-    # current_user.setRoster(random_pokemon)
-    # current_user.saveToDB()
+    # Shuffles every user's pokemon
     all_users = User.query.all()
     for user in  all_users:
         random_pokemon = Pokedex.pick_random_pokemon(5)
         user.setRoster(random_pokemon)
         user.saveToDB()
-
-    # pokemon_list = []
-    # for user in all_users:
-    #     pokemon_list.append(list(zip(user.getRoster(),user.getRosterNames())))
-
-    # start = time.time()
-    # all_users = User.query.all()
-    # print(all_users)
-    # print("Queried all users",time.time()-start)
-    
-    # for user in all_users:
-    #     start = time.time()
-    #     print(user.id,user.username,user.getRoster())
-    #     # print(user.id,user.username,user.poke_slot1,user.poke_slot2,user.poke_slot2,user.poke_slot3,user.poke_slot4,user.poke_slot5)
-    #     print("Querired another user",time.time()-start)
-
     return redirect(url_for('homePage'))
     
 
@@ -102,7 +78,6 @@ def runCode():
 @login_required
 def showProfiles():
     all_users = User.query.all()
-        
     return render_template('profile_explorer.html',all_users=all_users)
 
 @app.route('/profiles/<int:user_id>')
@@ -112,7 +87,6 @@ def showProfile(user_id):
         return redirect(url_for('myProfilePage'))
     user_profile = User.query.get(user_id)
     if not user_profile:
-        print("user doesn't exist")
         return redirect(url_for('homePage'))
 
     poke_results_group = []
@@ -120,9 +94,3 @@ def showProfile(user_id):
         pokemon_name = Pokedex.nums2names[poke_id]
         poke_results_group.append(PokeFinder.find_poke(pokemon_name))
     return render_template('profile.html',poke_results_group=poke_results_group,username=user_profile.username)
-
-    
-
-
-
-

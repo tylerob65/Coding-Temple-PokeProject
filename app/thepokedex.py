@@ -2,11 +2,7 @@ from thefuzz import process as fuzzprocess
 import json
 import os
 import random
-import requests
 
-# SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-# my_url = SITE_ROOT + "/static/pokedex.json"
-# pokedex = json.load(open(my_url))
 
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 my_url = SITE_ROOT + "/static/pokedex.json"
