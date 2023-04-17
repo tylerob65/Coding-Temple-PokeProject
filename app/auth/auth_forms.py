@@ -16,3 +16,12 @@ class LogInForm(FlaskForm):
     username = StringField('Username',validators=[DataRequired()])
     password = PasswordField('Password',validators=[DataRequired()])
     submit = SubmitField()
+
+class UpdateProfileForm(FlaskForm):
+    username = StringField('Username')
+    email = StringField('Email')
+    first_name = StringField('First Name')
+    last_name = StringField('Last Name')
+    password = PasswordField('Password')
+    confirm_password = PasswordField('Email',validators=[EqualTo('password')])
+    submit = SubmitField()

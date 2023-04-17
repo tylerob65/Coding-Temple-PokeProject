@@ -1,4 +1,4 @@
-from .auth_forms import SignUpForm, LogInForm
+from .auth_forms import SignUpForm, LogInForm, UpdateProfileForm
 from app.models import User
 from email_validator import EmailNotValidError, validate_email
 from flask import Blueprint, redirect, render_template, request, url_for
@@ -74,13 +74,76 @@ def logoutUser():
     return redirect(url_for('auth.loginPage'))
 
 
-@auth.route('/deleteaccount',methods=['GET','POST'])
+@auth.route('/deleteaccount',methods=['GET'])
 @login_required
 def deleteAccount():
     current_user.deleteFromDB()
     logout_user()
     return redirect(url_for('auth.signupPage'))
 
+@auth.route('/update_profile',methods=['GET','POST'])
+def updateProfilePage():
+    form = UpdateProfileForm()
+    
+    if request.method == 'GET':
+        return render_template("update_profile.html",form=form)
+    
+    error_messages = []
+    if not form.validate():
+        error_messages.append(("Form Did Not Validate. If you are trying to change password, make sure that you enter password twice and that they both match","danger"))
+    
+    
+    desired_username = form.username.data.strip().lower()
+    if desired_username:
+        user = User.query.filter_by(username=desired_username).first()
+        if not user:
+            error_messages.append((f"Username successfully changed to '{desired_username}'","success"))
+            current_user.username = desired_username
+            current_user.saveToDB()
+        elif user.username == desired_username:
+            error_messages.append((f"'{desired_username}' is already your username, no need to change","success"))
+        else:
+            error_messages.append(("Username already taken","danger"))
+            
+    desired_email = form.email.data
+    print(desired_email,type(desired_email))
+    if desired_email:
+        desired_email = check_email(desired_email)
+        print(desired_email,type(desired_email))
+        user_email = User.query.filter_by(email=desired_email).first()
+        if not desired_email:
+            error_messages.append(("Email provided is not a valid email address","danger"))
+        elif not user_email:
+            error_messages.append((f"Email successfully changed to '{desired_email}'","success"))
+            current_user.email = desired_email
+            current_user.saveToDB()
+        elif user_email.email == current_user.email:
+            error_messages.append((f"'{desired_email}' is already your email, no need to change","success"))
+        else:
+            error_messages.append(("Email address already in use by other account is not a valid email address","danger"))
+            
+    desired_first_name = form.first_name.data.strip()
+    if desired_first_name:
+        error_messages.append((f"First Name successfully changed to '{desired_first_name}'","success"))
+        current_user.first_name = desired_first_name
+        current_user.saveToDB()
+
+    desired_last_name = form.last_name.data.strip()
+    if desired_last_name:
+        error_messages.append((f"Last Name successfully changed to '{desired_last_name}'","success"))
+        current_user.last_name = desired_last_name
+        current_user.saveToDB()
+
+    desired_password = form.password.data
+    if desired_password or form.confirm_password.data:
+        if desired_password != form.confirm_password.data:
+            error_messages.append(("Passwords did not match","danger"))
+        else:
+            error_messages.append((f"Password successfully changed","success"))
+            current_user.password = desired_password
+            current_user.saveToDB()
+    
+    return render_template('update_profile.html',form=form,error_messages=error_messages)
 
 def check_email(email):
     try:

@@ -1,8 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+{% if error_messages %}
+{% for error_message in error_messages %}
+<div class="alert alert-{{error_message[1]}} alert-dismissible" role="alert">
+    {{ error_message[0] }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+
 <h1>Update Profile</h1>
 <h3>Fill in the fields that you would like to update</h3>
+
+
+
+{% if not_valid_form %}
+<p>There was an issue with your form, make sure to enter all required info and have matching passwords</p>
+{% endif %}
+{% if invalid_email %}
+<p>The email you entered in not valid, please make sure to only enter valid emails</p>
+{% endif %}
+{% if existing_username %}
+<p>There is already an account with this username. Please try another one.</p>
+{% endif %}
+{% if existing_email %}
+<p>There is already an account with this email address. Please pick another email address or sign in with your already
+    existing account</p>
+{% endif %}
+
+
+
+{% if form %}
 <form method="POST">
     {{ form.hidden_tag() }}
 
@@ -20,19 +51,8 @@
     <br>
     {{ form.submit(class='btn btn-danger') }}
 </form>
+{% endif %}
 <br>
-{% if not_valid_form %}
-<p>There was an issue with your form, make sure to enter all required info and have matching passwords</p>
-{% endif %}
-{% if invalid_email %}
-<p>The email you entered in not valid, please make sure to only enter valid emails</p>
-{% endif %}
-{% if existing_username %}
-<p>There is already an account with this username. Please try another one.</p>
-{% endif %}
-{% if existing_email %}
-<p>There is already an account with this email address. Please pick another email address or sign in with your already
-    existing account</p>
-{% endif %}
+
 
 {% endblock %}
