@@ -66,6 +66,12 @@ def runCode():
     # Used to test short bits of code
     
     # Shuffles every user's pokemon
+    # for i in range(1,200):
+    #     pokemon_name = Pokedex.nums2names[i]
+    #     print(i,pokemon_name)
+    #     poke_results = PokeFinder.find_poke(pokemon_name)
+
+
     all_users = User.query.all()
     for user in  all_users:
         random_pokemon = Pokedex.pick_random_pokemon(5)

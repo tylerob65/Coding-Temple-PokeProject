@@ -29,6 +29,12 @@
 .card {
     margin:auto;
     width: 14rem;
+    transition: 0.15s background-color ease-in-out, 0.15s transform ease-in-out;
+}
+
+.card:hover {
+    background-color: #fff1f1;
+    transform: scale(1.02);
 }
 
 small {
