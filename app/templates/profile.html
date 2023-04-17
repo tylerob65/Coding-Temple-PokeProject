@@ -21,22 +21,7 @@
 <h3>Here are {{username}}'s pokemon!</h3>
 <div class="multicard-display">
     {% for poke_results in poke_results_group %}
-    <div class="card-holder">
-        <div class="card" style="width: 18rem;">
-            <img src="{{poke_results['photo']}}" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title"><b>{{poke_results['name']}}</b> <small>(#{{poke_results['poke_id']}})</small></h5>
-                <p class="card-text card-stats">HP: <span style="float:right">{{poke_results['hp']}}</span></p>
-                <p class="card-text card-stats">Attack: <span style="float:right">{{poke_results['attack']}}</span></p>
-                <p class="card-text card-stats">Defense: <span style="float:right">{{poke_results['defense']}}</span></p>
-                <p class="card-text card-stats">Special-Attack: <span style="float:right">{{poke_results['special-attack']}}</span></p>
-                <p class="card-text card-stats">Special-Defense: <span style="float:right">{{poke_results['special-defense']}}</span></p>
-                <p class="card-text card-stats">Speed: <span style="float:right">{{poke_results['speed']}}</span></p>
-                <p class="card-text card-stats">Type: <span style="float:right">{{poke_results['type']}}</span></p>
-                
-            </div>
-        </div>
-    </div>
+    {% include 'poke_card.html' %}
     {% endfor %}
 </div>
 {% endif %}
