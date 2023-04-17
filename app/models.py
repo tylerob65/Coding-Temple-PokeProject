@@ -2,6 +2,7 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from app.thepokedex import Pokedex
+import requests
 
 # Instantiate the database
 db = SQLAlchemy()
@@ -66,3 +67,98 @@ class User(db.Model,UserMixin):
         return output
         
 
+class Pokemon(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    name = db.Column(db.String,nullable=False,unique=True)
+    hp = db.Column(db.Integer)
+    attack = db.Column(db.Integer)
+    defense = db.Column(db.Integer)
+    speed = db.Column(db.Integer)
+    special_attack = db.Column(db.Integer)
+    special_defense = db.Column(db.Integer)
+    pokemon_type = db.Column(db.String)
+    sprite = db.Column(db.String)
+    photo = db.Column(db.String)
+
+
+    def __init__(self,id,poke_dict_from_api):
+        self.id = id
+        self.name = poke_dict_from_api['name'].lower()
+        self.hp = poke_dict_from_api['hp']
+        self.attack = poke_dict_from_api['attack']
+        self.defense = poke_dict_from_api['defense']
+        self.speed = poke_dict_from_api['speed']
+        self.special_attack = poke_dict_from_api['special-attack']
+        self.special_defense = poke_dict_from_api['special-defense']
+        self.pokemon_type = poke_dict_from_api['type']
+        self.sprite = poke_dict_from_api['sprite']
+        self.photo = poke_dict_from_api['photo']
+
+    def saveToDB(self):
+        db.session.add(self)
+        db.session.commit()
+    
+    def saveChangesToDB(self):
+        db.session.commit()
+    
+    def getPokedict(self):
+        pokedict = dict()
+        pokedict['poke_id'] = self.id
+        pokedict['name'] = self.name
+        pokedict['sprite'] = self.sprite
+        pokedict['photo'] = self.photo
+        pokedict['hp'] = self.hp
+        pokedict['attack'] = self.attack
+        pokedict['defense'] = self.defense
+        pokedict['speed'] = self.speed
+        pokedict['special-attack'] = self.special_attack
+        pokedict['special-defense'] = self.special_defense
+        pokedict['type'] = self.pokemon_type
+        return pokedict
+    
+    
+
+class PokeFinder():
+    def find_poke(pokemon_name):
+        pokemon_name = pokemon_name.strip().lower()
+        if not pokemon_name:
+            return False
+        
+        if pokemon_name not in Pokedex.names2nums:
+            return False
+        
+        pokemon_number = Pokedex.names2nums[pokemon_name]
+
+        pokemon = Pokemon.query.get(pokemon_number)
+
+        if pokemon:
+            print("Printed from stored info")
+            return pokemon.getPokedict()
+        
+        url = f'https://pokeapi.co/api/v2/pokemon/{pokemon_name}/'
+        response = requests.get(url)
+        if not response.ok:
+            return False
+        data = response.json()
+        poke_dict={
+                "poke_id": data['id'],
+                "name": data['name'].lower(),
+                "sprite":data['sprites']["front_default"],
+                "photo":data['sprites']['other']['home']["front_default"],
+                }
+        if not poke_dict['photo']:
+            poke_dict['photo'] = data['sprites']['other']['official-artwork']["front_default"]
+        for stat in data['stats']:
+            stat_name = stat['stat']['name']
+            stat_val = stat['base_stat']
+            poke_dict[stat_name] = stat_val
+        type_list = []
+        for poke_type in data['types']:
+            type_list.append(poke_type['type']['name'].lower())
+        poke_dict['type'] = "/".join(type_list)
+
+
+        pokemon = Pokemon(pokemon_number,poke_dict)
+        pokemon.saveToDB()
+
+        return poke_dict

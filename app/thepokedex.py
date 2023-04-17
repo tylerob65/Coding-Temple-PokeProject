@@ -28,33 +28,6 @@ class Pokedex():
         pokeguess,_ = fuzzprocess.extractOne(name,names2nums.keys())
         return pokeguess
     
-    def find_poke(pokemon_name):
-        pokemon_name = pokemon_name.strip().lower()
-        if not pokemon_name:
-            return False
-        
-        # Search through locally stored names first
-        # If not valid name was found, find out results ~10000 times faster
-        if pokemon_name not in names2nums:
-            return False
-        url = f'https://pokeapi.co/api/v2/pokemon/{pokemon_name}/'
-        response = requests.get(url)
-        if not response.ok:
-            return False
-        data = response.json()
-        poke_dict={
-                "poke_id": data['id'],
-                "name": data['name'].title(),
-                "ability":data['abilities'][0]["ability"]["name"],
-                "base experience":data['base_experience'],
-                "photo":data['sprites']['other']['home']["front_default"],
-                "attack base stat": data['stats'][1]['base_stat'],
-                "hp base stat":data['stats'][0]['base_stat'],
-                "defense stat":data['stats'][2]["base_stat"]}
-        if not poke_dict['photo']:
-            poke_dict['photo'] = data['sprites']['other']['official-artwork']["front_default"]
-        return poke_dict
-    
     def pick_random_pokemon(amount,off_limits=[]):
         pokelist = list(nums2names.keys())
         output = []
