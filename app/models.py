@@ -37,6 +37,11 @@ class User(db.Model,UserMixin):
         db.session.add(self)
         db.session.commit()
 
+    def deleteFromDB(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
     def setRoster(self,pokemon_list,commit=False):
         """There must be 5 in pokemon list"""
         self.poke_slot1 = pokemon_list[0]

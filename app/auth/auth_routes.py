@@ -2,7 +2,7 @@ from .auth_forms import SignUpForm, LogInForm
 from app.models import User
 from email_validator import EmailNotValidError, validate_email
 from flask import Blueprint, redirect, render_template, request, url_for
-from flask_login import login_user, logout_user
+from flask_login import current_user, login_required, login_user, logout_user
 from app.thepokedex import Pokedex
 
 auth = Blueprint('auth',__name__,template_folder='auth_templates')
@@ -72,6 +72,14 @@ def loginPage():
 def logoutUser():
     logout_user()
     return redirect(url_for('auth.loginPage'))
+
+
+@auth.route('/deleteaccount',methods=['GET','POST'])
+@login_required
+def deleteAccount():
+    current_user.deleteFromDB()
+    logout_user()
+    return redirect(url_for('auth.signupPage'))
 
 
 def check_email(email):
