@@ -75,7 +75,7 @@ footer {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-around;
-    align-items: center;
+    align-items: start;
 }
 
 .poke_link {
@@ -87,11 +87,18 @@ footer {
     --bs-tooltip-bg: var(--main_red);
 }
 
+.profile-button-holder {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    /* justify-content: center; */
+}
+
 .profile-button {
     height:40px;
     width:200px;
     background-color: var(--main_red);
-    margin: auto;
+    margin: 10px;
     text-align: center;
     text-decoration: none;
     color:white;

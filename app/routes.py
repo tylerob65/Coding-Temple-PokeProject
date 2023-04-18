@@ -1,7 +1,7 @@
 from app import app
 from app.forms import PokeSearchForm
 from app.models import User, PokeFinder, Pokemon
-from flask import redirect, render_template, request, url_for
+from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from app.thepokedex import Pokedex
 import time
@@ -20,34 +20,40 @@ def shuffleRoster():
     random_pokemon = Pokedex.pick_random_pokemon(5)
     current_user.setRoster(random_pokemon)
     current_user.saveToDB()
+    flash(f"You sucessfully shuffled your roster","success")
     return redirect('myprofile')
 
 @app.route('/removefromroster/<int:poke_id>')
 @login_required
 def removeFromRoster(poke_id):
     if not poke_id:
+        flash("Not a valid ID","danger")
         return redirect(url_for('myProfilePage'))
     user_roster = current_user.getRoster()
     if poke_id not in user_roster:
+        flash("You do not have this pokemon, so you can't remove it","danger")
         return redirect(url_for('myProfilePage'))
-    # TODO Show error messages for these
     new_roster = [poke for poke in user_roster if poke!=poke_id]
     new_roster.append(None)
     current_user.setRoster(new_roster)
     current_user.rebalanceRoster(commit=True)
+    flash(f"You sucessfully removed {Pokedex.nums2names[poke_id]}","success")
     return redirect(url_for('myProfilePage'))
 
 @app.route('/addtoroster/<int:poke_id>')
 @login_required
 def addToRoster(poke_id):
     if not poke_id:
+        flash("Not a valid ID","danger")
         return redirect(url_for('myProfilePage'))
     
     user_roster = current_user.getRoster()
     if all(user_roster):
+        flash("You already have a full roster","danger")
         return redirect(url_for('myProfilePage'))
     
     if poke_id in user_roster:
+        flash(f"You already have {Pokedex.nums2names[poke_id]} in your roster, you can not add again","danger")
         return redirect(url_for('myProfilePage'))
 
     # TODO Show error messages for these
@@ -55,8 +61,25 @@ def addToRoster(poke_id):
     user_roster[4] = poke_id
     current_user.setRoster(user_roster)
     current_user.rebalanceRoster(commit=True)
-    
+    flash(f"You successfully added {Pokedex.nums2names[poke_id]} to your roster","success")
     return redirect(url_for('myProfilePage'))
+
+@app.route('/addrandompokemon')
+@login_required
+def addRandomPokemon():
+    user_roster = current_user.getRoster()
+    if all(user_roster):
+        flash("You already have a full roster","danger")
+        return redirect(url_for('myProfilePage'))
+    
+    random_pokemon = Pokedex.pick_random_pokemon(1,off_limits=user_roster[:])
+    user_roster[4] = random_pokemon[0]
+    
+    current_user.setRoster(user_roster)
+    current_user.rebalanceRoster(commit=True)
+    flash(f"You successfully added {Pokedex.nums2names[random_pokemon[0]]} to your roster","success")
+    return redirect(url_for('myProfilePage'))
+
 
 @app.route('/pokesearch',methods=["GET","POST"])
 @app.route('/pokesearch/<int:pokemon_id>',methods=["GET","POST"])
@@ -110,10 +133,14 @@ def runCode():
     # print(current_user.inMyRoster(673))
     # current_user.rebalanceRoster(commit=True)
     # current_user.setRoster([111,879,313,None,None],commit=True)
-    a = current_user.getRoster()
+    # a = current_user.getRoster()
+    # offlimits = list(range(1,1001))
+    # a = Pokedex.pick_random_pokemon(1,off_limits=offlimits)
+    # print(a)
+
     
-    print(a)
-    print(all(a))
+    # print(a)
+    # print(all(a))
     # current_user.setRoster([913,649,970,295,None],commit=True)
     
     # WAS USED FOR ADDING POKEMON TO DATABASE
@@ -144,7 +171,6 @@ def runCode():
     
 
 
-
 @app.route('/profiles')
 @login_required
 def showProfiles():
@@ -162,10 +188,18 @@ def showProfile(user_id):
 
     poke_results_group = []
     for poke_id in user_profile.getRoster():
-        pokemon_name = Pokedex.nums2names[poke_id]
-        poke_results_group.append(PokeFinder.find_poke(pokemon_name))
+        if poke_id:
+            pokemon_name = Pokedex.nums2names[poke_id]
+            poke_results_group.append(PokeFinder.find_poke(pokemon_name))
+        else:
+            poke_results_group.append(None)
     return render_template('profile.html',poke_results_group=poke_results_group,username=user_profile.username)
 
+def populate_datebase_from_api():
+    for i in range(1,1010):
+        pokemon_name = Pokedex.nums2names[i]
+        print(i,pokemon_name)
+        poke_results = PokeFinder.find_poke(pokemon_name)
 
 def battle_test(pokedict1,pokedict2):
     def damage_each_turn(attacker,defender):
