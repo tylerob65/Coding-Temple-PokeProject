@@ -129,7 +129,9 @@ def myProfilePage():
 def runCode():
     
     # Used to test short bits of code
-
+    
+    # my_score = current_user.getRosterPokeScore()
+    # print(my_score)
     # current_user.setRoster([672,111,879,313,None],commit=True)
 
     # print(current_user.inMyRoster(673))

@@ -86,6 +86,14 @@ class User(db.Model,UserMixin):
     
     def rosterFull(self):
         return all(self.getRoster())
+    
+    def getRosterPokeScore(self):
+        score = 0
+        my_roster = self.getRoster()
+        for poke_id in my_roster:
+            if poke_id:
+                score += Pokemon.query.get(poke_id).pokescore
+        return score
         
 
 class Pokemon(db.Model):
