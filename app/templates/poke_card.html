@@ -10,6 +10,7 @@
             <p class="card-text card-stats">Defense: <span style="float:right">{{poke_results['defense']}}</span></p>
             <p class="card-text card-stats">Speed: <span style="float:right">{{poke_results['speed']}}</span></p>
             <p class="card-text card-stats">Type: <span style="float:right">{{poke_results['type']}}</span></p>
+            <b><p class="card-text card-stats">PokeScore: <span style="float:right">{{poke_results['pokescore']}}</span></p></b>
             {% if current_user.inMyRoster(poke_results['poke_id']) %}
             <br>
             <div class="text-center">

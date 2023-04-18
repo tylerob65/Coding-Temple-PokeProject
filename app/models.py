@@ -95,6 +95,7 @@ class Pokemon(db.Model):
     attack = db.Column(db.Integer)
     defense = db.Column(db.Integer)
     speed = db.Column(db.Integer)
+    pokescore = db.Column(db.Integer)
     pokemon_type = db.Column(db.String)
     sprite = db.Column(db.String)
     photo = db.Column(db.String)
@@ -107,6 +108,7 @@ class Pokemon(db.Model):
         self.attack = poke_dict_from_api['attack']
         self.defense = poke_dict_from_api['defense']
         self.speed = poke_dict_from_api['speed']
+        self.pokescore = poke_dict_from_api['pokescore']
         self.pokemon_type = poke_dict_from_api['type']
         self.sprite = poke_dict_from_api['sprite']
         self.photo = poke_dict_from_api['photo']
@@ -128,6 +130,7 @@ class Pokemon(db.Model):
         pokedict['attack'] = self.attack
         pokedict['defense'] = self.defense
         pokedict['speed'] = self.speed
+        pokedict['pokescore'] = self.pokescore
         pokedict['type'] = self.pokemon_type
         return pokedict
     
@@ -147,7 +150,7 @@ class PokeFinder():
         pokemon = Pokemon.query.get(pokemon_number)
 
         if pokemon:
-            print("Printed from stored info")
+            # print("Printed from stored info")
             return pokemon.getPokedict()
         
         url = f'https://pokeapi.co/api/v2/pokemon/{pokemon_name}/'
@@ -171,6 +174,10 @@ class PokeFinder():
         poke_dict['defense'] =  (poke_dict['defense'] + poke_dict['special-defense']) // 2
         del poke_dict['special-attack']
         del poke_dict['special-defense']
+
+        poke_dict['pokescore'] = poke_dict['attack'] + poke_dict['defense'] + poke_dict['hp']
+        poke_dict['pokescore'] += poke_dict['speed'] // 2
+
         type_list = []
         for poke_type in data['types']:
             type_list.append(poke_type['type']['name'].lower())

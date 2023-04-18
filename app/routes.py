@@ -6,6 +6,8 @@ from flask_login import current_user, login_required
 from app.thepokedex import Pokedex
 import time
 import random
+import json
+import csv
 
 @app.route('/')
 def homePage():
@@ -138,8 +140,47 @@ def runCode():
     # a = Pokedex.pick_random_pokemon(1,off_limits=offlimits)
     # print(a)
 
-    poke = Pokemon.query.get(600)
-    print(poke.getPokedict())
+    # poke = Pokemon.query.get(600)
+    # i = 1
+    # pokedict = PokeFinder.find_poke(Pokedex.nums2names[i])
+    # fieldnames = ["poke_id","name","hp","attack","defense","speed"]
+
+    # pokeoutput[poke.id] = {
+    #     "id":poke.id,
+    #     "name":poke.name,
+    #     "hp":poke.hp,
+    #     "attack":poke.attack,
+    #     "defense":poke.defense,
+    #     "speed":poke.speed,
+    # }
+    # json_object = json.dumps(pokeoutput)
+    
+    
+    # Creates CSV with Pokemon Stats
+    # with open('pokeanalyzer.csv','w') as f:
+    #     fieldnames = ["poke_id","name","hp","attack","defense","speed"]
+    #     writer = csv.DictWriter(f, fieldnames=fieldnames,extrasaction='ignore')
+    #     writer.writeheader()
+    #     for i in range(1,1011):
+    #         if i % 50 == 0:
+    #             print(i)
+    #         pokedict = PokeFinder.find_poke(Pokedex.nums2names[i])
+    #         writer.writerow(pokedict)
+
+
+    # Script used to add pokescore to database
+    # for i in range(1,1011):
+    #     if i % 100 == 0:
+    #         print(i)
+    #     poke = Pokemon.query.get(i)
+    #     new_pokescore = poke.attack + poke.defense + poke.hp
+    #     new_pokescore += poke.speed // 2
+    #     poke.pokescore = new_pokescore
+    #     poke.saveToDB()
+
+
+
+    # Script Used To Update Attack and Defense in database
     # for i in range(1,1011):
     #     if i % 100 == 0:
     #         print(i)
@@ -147,10 +188,6 @@ def runCode():
     #     poke.attack = (poke.attack + poke.special_attack) // 2
     #     poke.defense = (poke.defense + poke.special_defense) // 2
     #     poke.saveToDB()
-        
-    
-
-
     
     # print(a)
     # print(all(a))
@@ -221,19 +258,13 @@ def battle_test(pokedict1,pokedict2):
         section1 = (2*level)/5
         section2 = attacker['attack']/defender['defense']
         return int(((section1*power*section2)/50)+2)
+        
     
-
-    # e = effective
-    
-    pokedict1["effective-attack"] = (pokedict1["attack"]+pokedict1["special-attack"])//2
-    pokedict1["effective-defense"] = (pokedict1["defense"]+pokedict1["special-defense"])//2
-    pokedict2["effective-attack"] = (pokedict2["attack"]+pokedict2["special-attack"])//2
-    pokedict2["effective-defense"] = (pokedict2["defense"]+pokedict2["special-defense"])//2
     pokedict1["turn-damage"] = damage_each_turn(pokedict1,pokedict2)
     pokedict2["turn-damage"] = damage_each_turn(pokedict2,pokedict1)
 
-    print(pokedict1['poke_id'],pokedict1['name'],"hp",pokedict1['hp'],"effective-attack",pokedict1['effective-attack'],"effective-defense",pokedict1['effective-defense'],"turn-damage",pokedict1["turn-damage"])
-    print(pokedict2['poke_id'],pokedict2['name'],"hp",pokedict2['hp'],"effective-attack",pokedict2['effective-attack'],"effective-defense",pokedict2['effective-defense'],"turn-damage",pokedict2["turn-damage"])
+    print(pokedict1['poke_id'],pokedict1['name'],"hp",pokedict1['hp'],"attack",pokedict1['attack'],"defense",pokedict1['defense'],"turn-damage",pokedict1["turn-damage"])
+    print(pokedict2['poke_id'],pokedict2['name'],"hp",pokedict2['hp'],"attack",pokedict2['attack'],"defense",pokedict2['defense'],"turn-damage",pokedict2["turn-damage"])
     pokedict1["health-left"] = pokedict1['hp']
     pokedict2["health-left"] = pokedict2['hp']
     
