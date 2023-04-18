@@ -58,18 +58,34 @@ class User(db.Model,UserMixin):
     def getRosterNames(self):
         roster_names = []
         for pokemon_num in self.getRoster():
-            roster_names.append(Pokedex.nums2names[pokemon_num])
+            if pokemon_num:
+                roster_names.append(Pokedex.nums2names[pokemon_num])
+            else:
+                roster_names.append(None)
         return roster_names
     
     def getRosterNumsAndNames(self):
-        output = [
-            (self.poke_slot1,Pokedex.nums2names[self.poke_slot1]),
-            (self.poke_slot2,Pokedex.nums2names[self.poke_slot2]),
-            (self.poke_slot3,Pokedex.nums2names[self.poke_slot3]),
-            (self.poke_slot4,Pokedex.nums2names[self.poke_slot4]),
-            (self.poke_slot5,Pokedex.nums2names[self.poke_slot5]),
-        ]
+        output = []
+        for pokemon_num in self.getRoster():
+            if pokemon_num:
+                output.append((pokemon_num,Pokedex.nums2names[pokemon_num]))
+            else:
+                output.append((None,None))
         return output
+    
+    def rebalanceRoster(self,commit=False):
+        roster = [num for num in self.getRoster() if num]
+        roster.extend([None] * (5-len(roster)))
+        if commit:
+            self.setRoster(roster)
+            self.saveToDB()
+        return roster
+
+    def inMyRoster(self,poke_id):
+        return poke_id in self.getRoster()
+    
+    def rosterFull(self):
+        return all(self.getRoster())
         
 
 class Pokemon(db.Model):

@@ -22,6 +22,41 @@ def shuffleRoster():
     current_user.saveToDB()
     return redirect('myprofile')
 
+@app.route('/removefromroster/<int:poke_id>')
+@login_required
+def removeFromRoster(poke_id):
+    if not poke_id:
+        return redirect(url_for('myProfilePage'))
+    user_roster = current_user.getRoster()
+    if poke_id not in user_roster:
+        return redirect(url_for('myProfilePage'))
+    # TODO Show error messages for these
+    new_roster = [poke for poke in user_roster if poke!=poke_id]
+    new_roster.append(None)
+    current_user.setRoster(new_roster)
+    current_user.rebalanceRoster(commit=True)
+    return redirect(url_for('myProfilePage'))
+
+@app.route('/addtoroster/<int:poke_id>')
+@login_required
+def addToRoster(poke_id):
+    if not poke_id:
+        return redirect(url_for('myProfilePage'))
+    
+    user_roster = current_user.getRoster()
+    if all(user_roster):
+        return redirect(url_for('myProfilePage'))
+    
+    if poke_id in user_roster:
+        return redirect(url_for('myProfilePage'))
+
+    # TODO Show error messages for these
+
+    user_roster[4] = poke_id
+    current_user.setRoster(user_roster)
+    current_user.rebalanceRoster(commit=True)
+    
+    return redirect(url_for('myProfilePage'))
 
 @app.route('/pokesearch',methods=["GET","POST"])
 @app.route('/pokesearch/<int:pokemon_id>',methods=["GET","POST"])
@@ -57,19 +92,31 @@ def myProfilePage():
     
     poke_results_group = []
     for poke_id in current_user.getRoster():
-        pokemon_name = Pokedex.nums2names[poke_id]
-        poke_results_group.append(PokeFinder.find_poke(pokemon_name))
+        if poke_id:
+            pokemon_name = Pokedex.nums2names[poke_id]
+            poke_results_group.append(PokeFinder.find_poke(pokemon_name))
+        else:
+            poke_results_group.append(None)
     
     return render_template('my_profile.html',poke_results_group=poke_results_group)
 
 @app.route('/runcode',methods=['GET'])
 def runCode():
-    p1 = PokeFinder.find_poke("porygon-z")
-    p2 = PokeFinder.find_poke("arctozolt")
-    a = battle_test(p1,p2)
-    # Used to test short bits of code
     
-    # Shuffles every user's pokemon
+    # Used to test short bits of code
+
+    # current_user.setRoster([672,111,879,313,None],commit=True)
+
+    # print(current_user.inMyRoster(673))
+    # current_user.rebalanceRoster(commit=True)
+    # current_user.setRoster([111,879,313,None,None],commit=True)
+    a = current_user.getRoster()
+    
+    print(a)
+    print(all(a))
+    # current_user.setRoster([913,649,970,295,None],commit=True)
+    
+    # WAS USED FOR ADDING POKEMON TO DATABASE
     # for i in range(1,200):
     #     pokemon_name = Pokedex.nums2names[i]
     #     print(i,pokemon_name)
@@ -79,16 +126,24 @@ def runCode():
     # print(user1)
     # print(sys.getsizeof(user1))
 
+    # IN PROGRESS CODE TO SIMULAT BATTLE
+    # p1 = PokeFinder.find_poke("porygon-z")
+    # p2 = PokeFinder.find_poke("arctozolt")
+    # a = battle_test(p1,p2)
 
-
-
+    # SHUFFLES EVERY USERS POKEMON
     # all_users = User.query.all()
     # for user in  all_users:
     #     random_pokemon = Pokedex.pick_random_pokemon(5)
     #     user.setRoster(random_pokemon)
     #     user.saveToDB()
-    return redirect(url_for('homePage'))
     
+    
+    # return redirect(url_for('homePage'))
+    return redirect(url_for('myProfilePage'))
+    
+
+
 
 @app.route('/profiles')
 @login_required

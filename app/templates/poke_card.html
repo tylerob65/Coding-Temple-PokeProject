@@ -1,8 +1,10 @@
+{% if poke_results %}
 <div class="card-holder">
     <div class="card">
+        
         <img src="{{poke_results['photo']}}" class="card-img-top" alt="...">
         <div class="card-body">
-            <h5 class="card-title"><b>{{poke_results['name'].title()}}</b> <small>(#{{poke_results['poke_id']}})</small></h5>
+            <h5 class="card-title"><b>{{poke_results['name'].title()}}</b><br><small>(#{{poke_results['poke_id']}})</small></h5>
             <p class="card-text card-stats">HP: <span style="float:right">{{poke_results['hp']}}</span></p>
             <p class="card-text card-stats">Attack: <span style="float:right">{{poke_results['attack']}}</span></p>
             <p class="card-text card-stats">Defense: <span style="float:right">{{poke_results['defense']}}</span></p>
@@ -12,6 +14,20 @@
                     style="float:right">{{poke_results['special-defense']}}</span></p>
             <p class="card-text card-stats">Speed: <span style="float:right">{{poke_results['speed']}}</span></p>
             <p class="card-text card-stats">Type: <span style="float:right">{{poke_results['type']}}</span></p>
+            {% if current_user.inMyRoster(poke_results['poke_id']) %}
+            <br>
+            <div class="text-center">
+            <a class="btn btn-danger" href="/removefromroster/{{poke_results['poke_id']}}">Remove From Roster</a>
+            </div>
+            {% elif not current_user.rosterFull() %}
+            <br>
+            <div class="text-center">
+            <a class="btn btn-primary" style="margin:auto" href="/addtoroster/{{poke_results['poke_id']}}">Add to Roster</a>
+            </div>
+            {% endif %}
+
         </div>
+        
     </div>
 </div>
+{% endif %}
