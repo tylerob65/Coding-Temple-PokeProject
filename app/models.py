@@ -95,8 +95,6 @@ class Pokemon(db.Model):
     attack = db.Column(db.Integer)
     defense = db.Column(db.Integer)
     speed = db.Column(db.Integer)
-    special_attack = db.Column(db.Integer)
-    special_defense = db.Column(db.Integer)
     pokemon_type = db.Column(db.String)
     sprite = db.Column(db.String)
     photo = db.Column(db.String)
@@ -109,8 +107,6 @@ class Pokemon(db.Model):
         self.attack = poke_dict_from_api['attack']
         self.defense = poke_dict_from_api['defense']
         self.speed = poke_dict_from_api['speed']
-        self.special_attack = poke_dict_from_api['special-attack']
-        self.special_defense = poke_dict_from_api['special-defense']
         self.pokemon_type = poke_dict_from_api['type']
         self.sprite = poke_dict_from_api['sprite']
         self.photo = poke_dict_from_api['photo']
@@ -132,8 +128,6 @@ class Pokemon(db.Model):
         pokedict['attack'] = self.attack
         pokedict['defense'] = self.defense
         pokedict['speed'] = self.speed
-        pokedict['special-attack'] = self.special_attack
-        pokedict['special-defense'] = self.special_defense
         pokedict['type'] = self.pokemon_type
         return pokedict
     
@@ -173,6 +167,10 @@ class PokeFinder():
             stat_name = stat['stat']['name']
             stat_val = stat['base_stat']
             poke_dict[stat_name] = stat_val
+        poke_dict['attack'] =  (poke_dict['attack'] + poke_dict['special-attack']) // 2
+        poke_dict['defense'] =  (poke_dict['defense'] + poke_dict['special-defense']) // 2
+        del poke_dict['special-attack']
+        del poke_dict['special-defense']
         type_list = []
         for poke_type in data['types']:
             type_list.append(poke_type['type']['name'].lower())

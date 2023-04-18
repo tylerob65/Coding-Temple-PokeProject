@@ -138,6 +138,19 @@ def runCode():
     # a = Pokedex.pick_random_pokemon(1,off_limits=offlimits)
     # print(a)
 
+    poke = Pokemon.query.get(600)
+    print(poke.getPokedict())
+    # for i in range(1,1011):
+    #     if i % 100 == 0:
+    #         print(i)
+    #     poke = Pokemon.query.get(i)
+    #     poke.attack = (poke.attack + poke.special_attack) // 2
+    #     poke.defense = (poke.defense + poke.special_defense) // 2
+    #     poke.saveToDB()
+        
+    
+
+
     
     # print(a)
     # print(all(a))

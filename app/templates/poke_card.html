@@ -8,10 +8,6 @@
             <p class="card-text card-stats">HP: <span style="float:right">{{poke_results['hp']}}</span></p>
             <p class="card-text card-stats">Attack: <span style="float:right">{{poke_results['attack']}}</span></p>
             <p class="card-text card-stats">Defense: <span style="float:right">{{poke_results['defense']}}</span></p>
-            <p class="card-text card-stats">Special-Attack: <span
-                    style="float:right">{{poke_results['special-attack']}}</span></p>
-            <p class="card-text card-stats">Special-Defense: <span
-                    style="float:right">{{poke_results['special-defense']}}</span></p>
             <p class="card-text card-stats">Speed: <span style="float:right">{{poke_results['speed']}}</span></p>
             <p class="card-text card-stats">Type: <span style="float:right">{{poke_results['type']}}</span></p>
             {% if current_user.inMyRoster(poke_results['poke_id']) %}
