@@ -22,7 +22,7 @@ def shuffleRoster():
     random_pokemon = Pokedex.pick_random_pokemon(5)
     current_user.setRoster(random_pokemon)
     current_user.saveToDB()
-    flash(f"You sucessfully shuffled your roster","success")
+    flash(f"You successfully shuffled your roster","success")
     return redirect('myprofile')
 
 @app.route('/removefromroster/<int:poke_id>')
@@ -39,7 +39,7 @@ def removeFromRoster(poke_id):
     new_roster.append(None)
     current_user.setRoster(new_roster)
     current_user.rebalanceRoster(commit=True)
-    flash(f"You sucessfully removed {Pokedex.nums2names[poke_id]}","success")
+    flash(f"You successfully removed {Pokedex.nums2names[poke_id]}","success")
     return redirect(url_for('myProfilePage'))
 
 @app.route('/addtoroster/<int:poke_id>')
@@ -126,6 +126,50 @@ def myProfilePage():
     return render_template('my_profile.html',poke_results_group=poke_results_group)
 
 
+@app.route('/cancelchallenge/<int:battle_request_id>')
+@login_required
+def cancelchallenge(battle_request_id):
+    # Works for canceling own challenge and denying someone else's challenge
+
+    # if valid entry
+    if not battle_request_id:
+        flash("You did not provide a valid battle request ID","danger")
+        return redirect(url_for('myProfilePage'))
+
+    # if battle request exists
+    battle_request = BattleRequests.query.get(battle_request_id)
+
+    if not battle_request:
+        flash("This battle request does not exist","danger")
+        return redirect(url_for('myProfilePage'))
+    
+    if current_user.id == battle_request.challengee_id:
+        challenger_username = battle_request.challenger.username
+        battle_request.deleteFromDB()
+        flash(f"You successully cancelled your battle request from {challenger_username}","success")
+        return redirect(url_for('myProfilePage'))
+    
+    if current_user.id == battle_request.challenger_id:
+        challengee_username = battle_request.challengee.username
+        battle_request.deleteFromDB()
+        flash(f"You successully cancelled your battle request with {challengee_username}","success")
+        return redirect(url_for('myProfilePage'))
+    
+    flash("You were not part of this challenge","danger")
+    return redirect(url_for('myProfilePage'))
+
+    
+    
+
+
+
+    # if i am the challengee on the battle request
+
+
+
+    return
+    
+
 @app.route('/challenge/<int:challengee_id>',methods=['GET'])
 @login_required
 def challengeUser(challengee_id):
@@ -168,7 +212,7 @@ def challengeUser(challengee_id):
     pokelist = ",".join(map(str,my_roster))
     new_challenge = BattleRequests(current_user.id,challengee_id,pokelist)
     new_challenge.saveToDB()
-    flash(f"You sucessfully challenged {challengee.username}. ","success")
+    flash(f"You successfully challenged {challengee.username}. ","success")
     return redirect(url_for('myProfilePage'))
     
     
@@ -189,16 +233,20 @@ def runCode():
     # result = BattleRequests.battleRequestPairExists(1,1)
     # print(result)
 
-    my_roster = current_user.getRoster()
+    # my_roster = current_user.getRoster()
+
+    a = BattleRequests.query.get(4)
+    print(a.challengee.username)
+
     # print(my_roster)
     # print(all(my_roster))
-    ",".join(map(str,current_user.getRoster()))
-    a = map(str,current_user.getRoster())
-    print(a)
-    b = ",".join(a)
-    print(my_roster)
-    print(b)
-    print(type(b))
+    # ",".join(map(str,current_user.getRoster()))
+    # a = map(str,current_user.getRoster())
+    # print(a)
+    # b = ",".join(a)
+    # print(my_roster)
+    # print(b)
+    # print(type(b))
     # print(list(a))
     # list(map(str,User.getRoster()))
 
