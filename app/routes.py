@@ -1,6 +1,6 @@
 from app import app
 from app.forms import PokeSearchForm
-from app.models import User, PokeFinder, BattleRequests, db
+from app.models import User, PokeFinder, BattleRequests
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from app.thepokedex import Pokedex
@@ -157,17 +157,6 @@ def cancelchallenge(battle_request_id):
     
     flash("You were not part of this challenge","danger")
     return redirect(url_for('myProfilePage'))
-
-    
-    
-
-
-
-    # if i am the challengee on the battle request
-
-
-
-    return
     
 
 @app.route('/challenge/<int:challengee_id>',methods=['GET'])
@@ -235,8 +224,16 @@ def runCode():
 
     # my_roster = current_user.getRoster()
 
-    a = BattleRequests.query.get(4)
-    print(a.challengee.username)
+    # a = BattleRequests.query.get(4)
+    # print(a.challengee.username)
+
+    pokemon1 = 406 #lantunr
+    pokemon2 = 506  # prinplup
+    poke_num1 = Pokedex.nums2names[pokemon1]
+    poke_num2 = Pokedex.nums2names[pokemon2]
+
+
+    battle_test(PokeFinder.find_poke(poke_num1),PokeFinder.find_poke(poke_num2))
 
     # print(my_roster)
     # print(all(my_roster))
@@ -402,8 +399,8 @@ def battle_test(pokedict1,pokedict2):
     pokedict1["turn-damage"] = damage_each_turn(pokedict1,pokedict2)
     pokedict2["turn-damage"] = damage_each_turn(pokedict2,pokedict1)
 
-    print(pokedict1['poke_id'],pokedict1['name'],"hp",pokedict1['hp'],"attack",pokedict1['attack'],"defense",pokedict1['defense'],"turn-damage",pokedict1["turn-damage"])
-    print(pokedict2['poke_id'],pokedict2['name'],"hp",pokedict2['hp'],"attack",pokedict2['attack'],"defense",pokedict2['defense'],"turn-damage",pokedict2["turn-damage"])
+    print("pokedict1",pokedict1['poke_id'],pokedict1['name'],"hp",pokedict1['hp'],"attack",pokedict1['attack'],"defense",pokedict1['defense'],"speed",pokedict1['speed'],"turn-damage",pokedict1["turn-damage"])
+    print("pokedict2",pokedict2['poke_id'],pokedict2['name'],"hp",pokedict2['hp'],"attack",pokedict2['attack'],"defense",pokedict2['defense'],"speed",pokedict2['speed'],"turn-damage",pokedict2["turn-damage"])
     pokedict1["health-left"] = pokedict1['hp']
     pokedict2["health-left"] = pokedict2['hp']
     
@@ -417,15 +414,20 @@ def battle_test(pokedict1,pokedict2):
         random.shuffle(shuffler)
         attacker = shuffler[0]
         defender = shuffler[1]
-    
+    print(f"{attacker['name']} is going first")
     round_num = 0
     while round_num < 200:
+        print(f"\nround {round_num}")
+        print(f"{attacker['name']} is attacking")
+        print(f"{defender['name']} had {defender['health-left']} health left but then was attacked with {attacker['turn-damage']} and now has",end=" ")
         defender['health-left'] -= attacker['turn-damage']
+        print(f"{defender['health-left']} health left")
         if defender['health-left'] <= 0:
-            print("winner",attacker["name"],"rounds",round_num)
+            print("winner",attacker["name"],"rounds",round_num,"has",attacker['health-left'],"health left")
             return attacker
         
         attacker, defender = defender, attacker
         round_num += 1
+    print("There was a tie")
     return "Tie"
 
