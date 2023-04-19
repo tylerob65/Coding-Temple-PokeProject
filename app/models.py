@@ -125,6 +125,10 @@ class BattleRequests(db.Model):
     def deleteFromDB(self):
         db.session.delete(self)
         db.session.commit()
+    
+    def battleRequestPairExists(challenger_id,challengee_id):
+        return bool(BattleRequests.query.filter(db.and_(BattleRequests.challengee_id==challengee_id,BattleRequests.challenger_id==challenger_id)).first())
+
 
 
 class Pokemon(db.Model):

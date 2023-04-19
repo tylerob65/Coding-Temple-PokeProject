@@ -1,6 +1,6 @@
 from app import app
 from app.forms import PokeSearchForm
-from app.models import User, PokeFinder, Pokemon
+from app.models import User, PokeFinder, BattleRequests, db
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from app.thepokedex import Pokedex
@@ -125,21 +125,97 @@ def myProfilePage():
     
     return render_template('my_profile.html',poke_results_group=poke_results_group)
 
+
+@app.route('/challenge/<int:challengee_id>',methods=['GET'])
+@login_required
+def challengeUser(challengee_id):
+    
+    # Check if valid input
+    if not challengee_id:
+        flash("You did not provide a valid challengee_id","danger")
+        return redirect(url_for('myProfilePage'))
+    
+    if challengee_id == current_user.id:
+        flash("You can not challenge yourself","danger")
+        return redirect(url_for('myProfilePage'))
+    
+    # Check if challengee exists
+    challengee = User.query.get(challengee_id)
+    if not challengee:
+        flash("There is no user with this id","danger")
+        return redirect(url_for('myProfilePage'))
+
+    my_roster = current_user.getRoster()
+    # Check if have 5 pokemon
+    if not all(my_roster):
+        flash("You do not have a full roster, you need 5 pokemon to challenge people","danger")
+        return redirect(url_for('myProfilePage'))
+
+    # Check if pokescore is below limit
+    # TODO check if pokescore is below limit (use current_user.getRosterPokeScore())
+    
+    # Check if there is existing challenge
+    if BattleRequests.battleRequestPairExists(current_user.id,challengee_id):
+        flash("You already have an open challenge with this user, they still need to accept that challenge","danger")
+        return redirect(url_for('myProfilePage'))
+
+    if BattleRequests.battleRequestPairExists(challengee_id,current_user.id):
+        flash("This player is waiting for you to accept their challenge. You must accept before challenging them","danger")
+        return redirect(url_for('myProfilePage'))
+    
+    
+    
+    pokelist = ",".join(map(str,my_roster))
+    new_challenge = BattleRequests(current_user.id,challengee_id,pokelist)
+    new_challenge.saveToDB()
+    flash(f"You sucessfully challenged {challengee.username}. ","success")
+    return redirect(url_for('myProfilePage'))
+    
+    
+    # Add to database
+
+
+
+
+
 @app.route('/runcode',methods=['GET'])
 def runCode():
     
-    # Tim = 1
-    # John = 2
-    # Steve = 3
+    
+    # print(current_user.id)
+    # challengee_id = 2
+    # result = BattleRequests.query.filter(db.and_(BattleRequests.challengee_id==challengee_id,BattleRequests.challenger_id==current_user.id)).all()
+    # result = BattleRequests.query.filter(db.and_(BattleRequests.challengee_id==challengee_id,BattleRequests.challenger_id==current_user.id)).all()
+    # result = BattleRequests.battleRequestPairExists(1,1)
+    # print(result)
 
-    # a = TestChallenges(1,2,"TimChallengeJohnPokemon") 1 
-    # a = TestChallenges(1,3,"TimChallengeStevePokemon") 2 
-    # a = TestChallenges(3,2,"SteveChallengeJohnPokemon") 3
-
-
-    a = TestChallenges.query.get(1)
-    b = a.challenger
+    my_roster = current_user.getRoster()
+    # print(my_roster)
+    # print(all(my_roster))
+    ",".join(map(str,current_user.getRoster()))
+    a = map(str,current_user.getRoster())
+    print(a)
+    b = ",".join(a)
+    print(my_roster)
     print(b)
+    print(type(b))
+    # print(list(a))
+    # list(map(str,User.getRoster()))
+
+    # Below are battle requests I manually created
+    # a = BattleRequests(1,2,"1,2,3,4,5") , ID=1
+    # a = BattleRequests(1,3,"6,7,8,9,10"), ID=2
+    # a = BattleRequests(2,1,"11,12,13,14,15"),ID=3
+    # a = BattleRequests(2,3,"11,12,13,14,15"), ID=4
+
+    # The following print statements gave exactly what was expected
+    # print("User 1 as challenger",User.query.get(1).challenges_as_challenger)
+    # print("User 1 as challengee",User.query.get(1).challenges_as_challengee)
+    # print("User 2 as challengee",User.query.get(2).challenges_as_challengee)
+    # print("User 3 as challengee",User.query.get(3).challenges_as_challengee)
+    # print("User 3 as challenger",User.query.get(3).challenges_as_challenger)
+
+    
     
     # Used to test short bits of code
     
