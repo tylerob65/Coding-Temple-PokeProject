@@ -102,7 +102,7 @@ def pokeSearchPage(pokemon_id=None):
         return render_template('pokesearch.html',form=form,poke_results=poke_results)
 
     pokemon_name = form.pokemon_name.data.strip().lower()
-    poke_id = Pokedex.names2nums[pokemon_name]
+    poke_id = Pokedex.names2nums[pokemon_name] #Bug here
     poke_results = PokeFinder.find_poke(poke_id)
     if poke_results:
         return render_template('pokesearch.html',form=form,poke_results=poke_results)
