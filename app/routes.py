@@ -1,6 +1,6 @@
 from app import app
 from app.forms import PokeSearchForm
-from app.models import User, PokeFinder, Pokemon, TestChallenges, TestUser
+from app.models import User, PokeFinder, Pokemon
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from app.thepokedex import Pokedex
