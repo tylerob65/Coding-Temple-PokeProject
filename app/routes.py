@@ -93,8 +93,8 @@ def pokeSearchPage(pokemon_id=None):
         if not pokemon_id:
             return render_template('pokesearch.html',form=form)
         
-        pokemon_name = Pokedex.nums2names[pokemon_id]
-        poke_results = PokeFinder.find_poke(pokemon_name)
+        # pokemon_name = Pokedex.nums2names[pokemon_id]
+        poke_results = PokeFinder.find_poke(pokemon_id)
         
         return render_template('pokesearch.html',form=form,poke_results=poke_results)
 
@@ -102,7 +102,8 @@ def pokeSearchPage(pokemon_id=None):
         return render_template('pokesearch.html',form=form,poke_results=poke_results)
 
     pokemon_name = form.pokemon_name.data.strip().lower()
-    poke_results = PokeFinder.find_poke(pokemon_name)
+    poke_id = Pokedex.names2nums[pokemon_name]
+    poke_results = PokeFinder.find_poke(poke_id)
     if poke_results:
         return render_template('pokesearch.html',form=form,poke_results=poke_results)
     else:
@@ -118,8 +119,8 @@ def myProfilePage():
     poke_results_group = []
     for poke_id in current_user.getRoster():
         if poke_id:
-            pokemon_name = Pokedex.nums2names[poke_id]
-            poke_results_group.append(PokeFinder.find_poke(pokemon_name))
+            # pokemon_name = Pokedex.nums2names[poke_id]
+            poke_results_group.append(PokeFinder.find_poke(poke_id))
         else:
             poke_results_group.append(None)
     
@@ -198,7 +199,7 @@ def challengeUser(challengee_id):
     
     
     
-    pokelist = ",".join(map(str,my_roster))
+    pokelist = "/".join(map(str,my_roster))
     new_challenge = BattleRequests(current_user.id,challengee_id,pokelist)
     new_challenge.saveToDB()
     flash(f"You successfully challenged {challengee.username}. ","success")
@@ -224,18 +225,27 @@ def runCode():
 
     # my_roster = current_user.getRoster()
 
-    print(Pokedex.get_type_effectivity("normal/fire","grass/ghost"))
+    # print(Pokedex.get_type_effectivity("normal/fire","grass/ghost"))
 
     # a = BattleRequests.query.get(4)
     # print(a.challengee.username)
 
-    pokemon1 = 493 #
-    pokemon2 = 92  # 
-    poke_num1 = Pokedex.nums2names[pokemon1]
-    poke_num2 = Pokedex.nums2names[pokemon2]
+    # pokemon1 = 493 #
+    # pokemon2 = 92  # 
+    # poke_num1 = Pokedex.nums2names[pokemon1]
+    # poke_num2 = Pokedex.nums2names[pokemon2]
+
+    # Pokedex.battle_test(PokeFinder.find_poke(poke_num1),PokeFinder.find_poke(poke_num2))
+    
+    # print(current_user)
+
+    # loser = current_user
+
+    # print(loser)
+
+    # print(loser==current_user)
 
 
-    battle_test(PokeFinder.find_poke(poke_num1),PokeFinder.find_poke(poke_num2))
 
     # print(my_roster)
     # print(all(my_roster))
@@ -377,8 +387,8 @@ def showProfile(user_id):
     poke_results_group = []
     for poke_id in user_profile.getRoster():
         if poke_id:
-            pokemon_name = Pokedex.nums2names[poke_id]
-            poke_results_group.append(PokeFinder.find_poke(pokemon_name))
+            # pokemon_name = Pokedex.nums2names[poke_id]
+            poke_results_group.append(PokeFinder.find_poke(poke_id))
         else:
             poke_results_group.append(None)
     return render_template('profile.html',poke_results_group=poke_results_group,username=user_profile.username)
@@ -387,64 +397,125 @@ def populate_datebase_from_api():
     for i in range(1,1010):
         pokemon_name = Pokedex.nums2names[i]
         print(i,pokemon_name)
-        poke_results = PokeFinder.find_poke(pokemon_name)
+        poke_results = PokeFinder.find_poke(i)
 
-def battle_test(pokedict1,pokedict2):
-    def damage_each_turn(attacker,defender):
-        power = 10
-        level = 50
-        section1 = (2*level)/5
-        section2 = attacker['attack']/defender['defense']
-        # Result below is prior to accounting for pokemon type
-        result = ((section1*power*section2)/50)+2
-        # Result below takes type inco account
-        result = result * Pokedex.get_type_effectivity(attacker["type"],defender["type"])
-        return int(result)
+# def battle_test(pokedict1,pokedict2):
+#     def damage_each_turn(attacker,defender):
+#         power = 10
+#         level = 50
+#         section1 = (2*level)/5
+#         section2 = attacker['attack']/defender['defense']
+#         # Result below is prior to accounting for pokemon type
+#         result = ((section1*power*section2)/50)+2
+#         # Result below takes type inco account
+#         result = result * Pokedex.get_type_effectivity(attacker["type"],defender["type"])
+#         return int(result)
         
     
-    pokedict1["turn-damage"] = damage_each_turn(pokedict1,pokedict2)
-    pokedict2["turn-damage"] = damage_each_turn(pokedict2,pokedict1)
+#     pokedict1["turn-damage"] = damage_each_turn(pokedict1,pokedict2)
+#     pokedict2["turn-damage"] = damage_each_turn(pokedict2,pokedict1)
 
-    if pokedict1["turn-damage"] == 0 and pokedict2["turn-damage"] == 0:
-        print("Both did no do no damage to eachother, pick random winner")
-        shuffler = [pokedict1,pokedict2]
-        random.shuffle(shuffler)
-        return shuffler[0]
+#     if pokedict1["turn-damage"] == 0 and pokedict2["turn-damage"] == 0:
+#         print("Both did no do no damage to eachother, pick random winner")
+#         shuffler = [pokedict1,pokedict2]
+#         random.shuffle(shuffler)
+#         return shuffler[0]
 
 
 
-    print("pokedict1",pokedict1['poke_id'],pokedict1['name'],"hp",pokedict1['hp'],"attack",pokedict1['attack'],"defense",pokedict1['defense'],"speed",pokedict1['speed'],"turn-damage",pokedict1["turn-damage"])
-    print("pokedict2",pokedict2['poke_id'],pokedict2['name'],"hp",pokedict2['hp'],"attack",pokedict2['attack'],"defense",pokedict2['defense'],"speed",pokedict2['speed'],"turn-damage",pokedict2["turn-damage"])
-    pokedict1["health-left"] = pokedict1['hp']
-    pokedict2["health-left"] = pokedict2['hp']
+#     print("pokedict1",pokedict1['poke_id'],pokedict1['name'],"hp",pokedict1['hp'],"attack",pokedict1['attack'],"defense",pokedict1['defense'],"speed",pokedict1['speed'],"turn-damage",pokedict1["turn-damage"])
+#     print("pokedict2",pokedict2['poke_id'],pokedict2['name'],"hp",pokedict2['hp'],"attack",pokedict2['attack'],"defense",pokedict2['defense'],"speed",pokedict2['speed'],"turn-damage",pokedict2["turn-damage"])
+#     pokedict1["health-left"] = pokedict1['hp']
+#     pokedict2["health-left"] = pokedict2['hp']
     
     
-    if pokedict1['speed'] > pokedict2['speed']:
-        attacker, defender = pokedict1, pokedict2
-    elif pokedict1['speed'] < pokedict2['speed']:
-        attacker, defender = pokedict2, pokedict1
-    else:
-        shuffler = [pokedict1,pokedict2]
-        random.shuffle(shuffler)
-        attacker = shuffler[0]
-        defender = shuffler[1]
-    print(f"{attacker['name']} is going first")
-    round_num = 0
-    while round_num < 200:
-        print(f"\nround {round_num}")
-        print(f"{attacker['name']} is attacking")
-        print(f"{defender['name']} had {defender['health-left']} health left but then was attacked with {attacker['turn-damage']} and now has",end=" ")
-        defender['health-left'] -= attacker['turn-damage']
-        print(f"{defender['health-left']} health left")
-        if defender['health-left'] <= 0:
-            print("winner",attacker["name"],"rounds",round_num,"has",attacker['health-left'],"health left")
-            return attacker
+#     if pokedict1['speed'] > pokedict2['speed']:
+#         attacker, defender = pokedict1, pokedict2
+#     elif pokedict1['speed'] < pokedict2['speed']:
+#         attacker, defender = pokedict2, pokedict1
+#     else:
+#         shuffler = [pokedict1,pokedict2]
+#         random.shuffle(shuffler)
+#         attacker = shuffler[0]
+#         defender = shuffler[1]
+#     print(f"{attacker['name']} is going first")
+#     round_num = 0
+#     while round_num < 200:
+#         print(f"\nround {round_num}")
+#         print(f"{attacker['name']} is attacking")
+#         print(f"{defender['name']} had {defender['health-left']} health left but then was attacked with {attacker['turn-damage']} and now has",end=" ")
+#         defender['health-left'] -= attacker['turn-damage']
+#         print(f"{defender['health-left']} health left")
+#         if defender['health-left'] <= 0:
+#             print("winner",attacker["name"],"rounds",round_num,"has",attacker['health-left'],"health left")
+#             return attacker
         
-        attacker, defender = defender, attacker
-        round_num += 1
+#         attacker, defender = defender, attacker
+#         round_num += 1
     
-    # Round lasted too long, picking random pokemon
-    shuffler = [pokedict1,pokedict2]
-    random.shuffle(shuffler)
-    return shuffler[0]
+#     # Round lasted too long, picking random pokemon
+#     shuffler = [pokedict1,pokedict2]
+#     random.shuffle(shuffler)
+#     return shuffler[0]
+
+@app.route('/acceptchallenge/<int:battle_request_id>')
+@login_required
+def acceptchallenge(battle_request_id):
+
+    # Make sure valid input
+    if not battle_request_id:
+        flash("This was not a valid battle request id","danger")
+        return redirect(url_for('myProfilePage'))
+
+    
+    # Make sure battle request exists
+    battle_request = BattleRequests.query.get(battle_request_id)
+
+    if not battle_request:
+        flash("This battle request does not exist","danger")
+        return redirect(url_for('myProfilePage'))
+    
+    # Make sure user am challengee
+    if current_user.id != battle_request.challengee_id:
+        flash("You were not the challengee in this battle request","danger")
+        return redirect(url_for('myProfilePage'))
+
+
+    if current_user.id == battle_request.challengee_id:
+        challenger_username = battle_request.challenger.username
+        battle_request.deleteFromDB()
+        flash(f"You successully cancelled your battle request from {challenger_username}","success")
+        return redirect(url_for('myProfilePage'))
+    
+    # Check if have 5 pokemon
+    challengee_roster = current_user.getRoster()
+    
+    if not all(challengee_roster):
+        flash("You do not have a full roster, you need 5 pokemon to accept a challenge","danger")
+        return redirect(url_for('myProfilePage'))
+    
+    # TODO make sure it is below a certain Pokescore
+    
+    # At this point we can simulate the battle
+    
+    # Give battle simulator info it needs to run
+    # SimulateBattle
+    # Return dictionary results
+    
+    # What does a battle simulator need?
+        # It needs to know who challenger and challengee
+        # It needs to know pokemon of both parties
+    
+    # It returns dictionary with info
+        # winner pokemon string and loser pokemon string
+        # round results string
+        # winner_was_challenger
+
+    # After it gets results
+        # Deletes battle request
+        # Saves battle to battle table
+        # Updates challenger
+
+    return redirect(url_for('myProfilePage'))
+
 

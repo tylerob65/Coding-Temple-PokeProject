@@ -2,6 +2,7 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from app.thepokedex import Pokedex
+import random
 import requests
 
 # Instantiate the database
@@ -180,21 +181,21 @@ class Pokemon(db.Model):
     
 
 class PokeFinder():
-    def find_poke(pokemon_name):
-        pokemon_name = pokemon_name.strip().lower()
-        if not pokemon_name:
+    def find_poke(pokemon_number):
+        
+        if not pokemon_number:
             return False
         
-        if pokemon_name not in Pokedex.names2nums:
+        if pokemon_number not in Pokedex.nums2names:
             return False
-        
-        pokemon_number = Pokedex.names2nums[pokemon_name]
 
         pokemon = Pokemon.query.get(pokemon_number)
 
         if pokemon:
             # print("Printed from stored info")
             return pokemon.getPokedict()
+        
+        pokemon_name = Pokedex.nums2names[pokemon_number]
         
         url = f'https://pokeapi.co/api/v2/pokemon/{pokemon_name}/'
         response = requests.get(url)
@@ -231,3 +232,153 @@ class PokeFinder():
         pokemon.saveToDB()
 
         return poke_dict
+
+
+class BattleSim():
+    def sim_battle(challenger,challenger_roster,challengee,challengee_roster):
+        random.shuffle(challengee_roster)
+        random.shuffle(challenger_roster)
+        
+        challenger_rounds_won = 0
+        
+        # Will be 1 for each round challenger wins, 0 if challenger lost
+        challenger_round_wins = []
+        
+        for challenger_pokemon_id, challengee_pokemon_id in zip(challenger_roster,challengee_roster):
+            # Get Challenger Pokedict and add flag
+            challenger_pokedict = PokeFinder.find_poke(challenger_pokemon_id)
+            challenger_pokedict["ChallengersPokemon"] = True
+            
+            # Get Challengee Pokedict and add flag
+            challengee_pokedict = PokeFinder.find_poke(challengee_pokemon_id)
+            challengee_pokedict["ChallengersPokemon"] = False
+
+            # Simulate Battle
+            winner_pokedict = BattleSim.sim_battle_round(challenger_pokedict,challengee_pokedict)
+
+            # Challenger won
+            if winner_pokedict["ChallengersPokemon"]:
+                challenger_rounds_won += 1
+                challenger_round_wins.append(1)
+            else:
+                challenger_round_wins.append(0)
+            
+        return 
+
+    def sim_battle_round(pokedict1,pokedict2):
+        def damage_each_turn(attacker,defender):
+            power = 10
+            level = 50
+            section1 = (2*level)/5
+            section2 = attacker['attack']/defender['defense']
+            # Result below is prior to accounting for pokemon type
+            result = ((section1*power*section2)/50)+2
+            # Result below takes type inco account
+            result = result * Pokedex.get_type_effectivity(attacker["type"],defender["type"])
+            return int(result)
+            
+        
+        pokedict1["turn-damage"] = damage_each_turn(pokedict1,pokedict2)
+        pokedict2["turn-damage"] = damage_each_turn(pokedict2,pokedict1)
+
+        if pokedict1["turn-damage"] == 0 and pokedict2["turn-damage"] == 0:
+            print("Both did no do no damage to eachother, pick random winner")
+            shuffler = [pokedict1,pokedict2]
+            random.shuffle(shuffler)
+            return shuffler[0]
+
+        print("pokedict1",pokedict1['poke_id'],pokedict1['name'],"hp",pokedict1['hp'],"attack",pokedict1['attack'],"defense",pokedict1['defense'],"speed",pokedict1['speed'],"turn-damage",pokedict1["turn-damage"])
+        print("pokedict2",pokedict2['poke_id'],pokedict2['name'],"hp",pokedict2['hp'],"attack",pokedict2['attack'],"defense",pokedict2['defense'],"speed",pokedict2['speed'],"turn-damage",pokedict2["turn-damage"])
+        pokedict1["health-left"] = pokedict1['hp']
+        pokedict2["health-left"] = pokedict2['hp']
+        
+        
+        if pokedict1['speed'] > pokedict2['speed']:
+            attacker, defender = pokedict1, pokedict2
+        elif pokedict1['speed'] < pokedict2['speed']:
+            attacker, defender = pokedict2, pokedict1
+        else:
+            shuffler = [pokedict1,pokedict2]
+            random.shuffle(shuffler)
+            attacker = shuffler[0]
+            defender = shuffler[1]
+        print(f"{attacker['name']} is going first")
+        round_num = 0
+        while round_num < 200:
+            print(f"\nround {round_num}")
+            print(f"{attacker['name']} is attacking")
+            print(f"{defender['name']} had {defender['health-left']} health left but then was attacked with {attacker['turn-damage']} and now has",end=" ")
+            defender['health-left'] -= attacker['turn-damage']
+            print(f"{defender['health-left']} health left")
+            if defender['health-left'] <= 0:
+                print("winner",attacker["name"],"rounds",round_num,"has",attacker['health-left'],"health left")
+                return attacker
+            
+            attacker, defender = defender, attacker
+            round_num += 1
+        
+        # Round lasted too long, picking random pokemon
+        shuffler = [pokedict1,pokedict2]
+        random.shuffle(shuffler)
+        return shuffler[0]
+    
+    def sim_battle_round_verbose(pokedict1,pokedict2):
+        def damage_each_turn(attacker,defender):
+            power = 10
+            level = 50
+            section1 = (2*level)/5
+            section2 = attacker['attack']/defender['defense']
+            # Result below is prior to accounting for pokemon type
+            result = ((section1*power*section2)/50)+2
+            # Result below takes type inco account
+            result = result * Pokedex.get_type_effectivity(attacker["type"],defender["type"])
+            return int(result)
+            
+        
+        pokedict1["turn-damage"] = damage_each_turn(pokedict1,pokedict2)
+        pokedict2["turn-damage"] = damage_each_turn(pokedict2,pokedict1)
+
+        if pokedict1["turn-damage"] == 0 and pokedict2["turn-damage"] == 0:
+            print("Both did no do no damage to eachother, pick random winner")
+            shuffler = [pokedict1,pokedict2]
+            random.shuffle(shuffler)
+            return shuffler[0]
+
+
+
+        print("pokedict1",pokedict1['poke_id'],pokedict1['name'],"hp",pokedict1['hp'],"attack",pokedict1['attack'],"defense",pokedict1['defense'],"speed",pokedict1['speed'],"turn-damage",pokedict1["turn-damage"])
+        print("pokedict2",pokedict2['poke_id'],pokedict2['name'],"hp",pokedict2['hp'],"attack",pokedict2['attack'],"defense",pokedict2['defense'],"speed",pokedict2['speed'],"turn-damage",pokedict2["turn-damage"])
+        pokedict1["health-left"] = pokedict1['hp']
+        pokedict2["health-left"] = pokedict2['hp']
+        
+        
+        if pokedict1['speed'] > pokedict2['speed']:
+            attacker, defender = pokedict1, pokedict2
+        elif pokedict1['speed'] < pokedict2['speed']:
+            attacker, defender = pokedict2, pokedict1
+        else:
+            shuffler = [pokedict1,pokedict2]
+            random.shuffle(shuffler)
+            attacker = shuffler[0]
+            defender = shuffler[1]
+        print(f"{attacker['name']} is going first")
+        round_num = 0
+        while round_num < 200:
+            print(f"\nround {round_num}")
+            print(f"{attacker['name']} is attacking")
+            print(f"{defender['name']} had {defender['health-left']} health left but then was attacked with {attacker['turn-damage']} and now has",end=" ")
+            defender['health-left'] -= attacker['turn-damage']
+            print(f"{defender['health-left']} health left")
+            if defender['health-left'] <= 0:
+                print("winner",attacker["name"],"rounds",round_num,"has",attacker['health-left'],"health left")
+                return attacker
+            
+            attacker, defender = defender, attacker
+            round_num += 1
+        
+        # Round lasted too long, picking random pokemon
+        shuffler = [pokedict1,pokedict2]
+        random.shuffle(shuffler)
+        return shuffler[0]
+    
+    pass

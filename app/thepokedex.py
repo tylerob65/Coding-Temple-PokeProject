@@ -65,3 +65,5 @@ class Pokedex():
             final += val
         final_mult = final / len(damage_mult)
         return final_mult
+    
+    
