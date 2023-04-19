@@ -1,6 +1,6 @@
 from app import app
 from app.forms import PokeSearchForm
-from app.models import User, PokeFinder, Pokemon
+from app.models import User, PokeFinder, Pokemon, TestChallenges, TestUser
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from app.thepokedex import Pokedex
@@ -127,6 +127,19 @@ def myProfilePage():
 
 @app.route('/runcode',methods=['GET'])
 def runCode():
+    
+    # Tim = 1
+    # John = 2
+    # Steve = 3
+
+    # a = TestChallenges(1,2,"TimChallengeJohnPokemon") 1 
+    # a = TestChallenges(1,3,"TimChallengeStevePokemon") 2 
+    # a = TestChallenges(3,2,"SteveChallengeJohnPokemon") 3
+
+
+    a = TestChallenges.query.get(1)
+    b = a.challenger
+    print(b)
     
     # Used to test short bits of code
     

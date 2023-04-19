@@ -7,6 +7,83 @@ import requests
 # Instantiate the database
 db = SQLAlchemy()
 
+
+# https://stackoverflow.com/questions/44434410/sqlalchemy-multiple-foreign-key-pointing-to-same-table-same-attribute
+class TestUser(db.Model):
+    __tablename__ = 'test_user'
+    id = db.Column(db.Integer,primary_key=True)
+    username = db.Column(db.String(25),nullable = False,unique=True)  
+    
+    # TODO look at these
+    
+    # user = db.relationship("BankSlip", foreign_keys='BankSlip.person_user_id', back_populates="person_user")
+    challenges_as_challenger = db.relationship("TestChallenges",foreign_keys='TestChallenges.challenger_id',back_populates="challenger")
+    
+    # reference = db.relationship("BankSlip", foreign_keys='BankSlip.person_ref_id', back_populates="person_reference")
+    challenges_as_challengee = db.relationship("TestChallenges",foreign_keys='TestChallenges.challengee_id',back_populates="challengee")
+    
+    
+    # challenges_as_challenger = db.relationship("TestChallenges",foreign_keys='test_challenges.challenger_id',back_populates="challenger")
+    # challenges_as_challengee = db.relationship("TestChallenges",foreign_keys='test_challenges.challengee_id',back_populates="challengee")
+
+
+    
+    
+    def __init__(self,username):
+        self.username = username
+    
+    def saveToDB(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def deleteFromDB(self):
+        db.session.delete(self)
+        db.session.commit()
+
+class TestChallenges(db.Model):
+    __tablename__ = 'test_challenges'
+    id = db.Column(db.Integer,primary_key=True)
+    challenger_pokelist = db.Column(db.String())
+    
+    #TODO Look at these
+    
+    # person_user_id = db.Column(db.Integer, db.ForeignKey(Person.id))
+    challenger_id = db.Column(db.Integer, db.ForeignKey(TestUser.id), nullable=False)
+
+    
+    # person_user = db.relationship("Person", back_populates="user", uselist=False, foreign_keys=[person_user_id])
+    challenger = db.relationship("TestUser",back_populates="challenges_as_challenger",foreign_keys=[challenger_id])
+    # challenger = db.relationship("TestUser",foreign_keys=[challenger_id],back_populates="challenges_as_challenger")
+    
+    # person_ref_id = db.Column(db.Integer, db.ForeignKey(Person.id))
+    challengee_id = db.Column(db.Integer, db.ForeignKey(TestUser.id), nullable=False)
+    
+
+    # person_reference = db.relationship("Person", back_populates="reference", uselist=False, foreign_keys=[person_ref_id])
+    challengee = db.relationship("TestUser",back_populates="challenges_as_challengee",foreign_keys=[challengee_id])
+    # challengee = db.relationship("TestUser",foreign_keys=[challengee_id],back_populates="challenges_as_challengee")
+
+    def __init__(self,challenger_id,challengee_id,challenger_pokelist):
+        self.challenger_id = challenger_id
+        self.challengee_id = challengee_id
+        self.challenger_pokelist = challenger_pokelist
+    
+    def saveToDB(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def deleteFromDB(self):
+        db.session.delete(self)
+        db.session.commit()
+    
+
+
+
+
+    
+
+
+
 class User(db.Model,UserMixin):
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(25),nullable = False,unique=True)
@@ -95,6 +172,29 @@ class User(db.Model,UserMixin):
                 score += Pokemon.query.get(poke_id).pokescore
         return score
         
+
+# class BattleRequests(db.Model):
+#     __tablename__ = 'battle_requests'
+#     id = db.Column(db.Integer,primary_key=True)
+#     challenger_id = db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)
+#     challengee_id = db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)
+#     challenge_date = db.Column(db.DateTime, nullable = False, default=datetime.utcnow())
+#     # String of pokemon ids separated by commas
+#     challenger_pokemon = db.Column(db.String,nullable=False)
+
+#     def __init__(self,challenger_id,challengee_id,challenger_pokemon):
+#         self.challenger_id = challenger_id
+#         self.challengee_id = challengee_id
+#         self.challenger_pokemon = challenger_pokemon
+
+#     def saveToDB(self):
+#         db.session.add(self)
+#         db.session.commit()
+
+#     def deleteFromDB(self):
+#         db.session.delete(self)
+#         db.session.commit()
+
 
 class Pokemon(db.Model):
     id = db.Column(db.Integer,primary_key=True)
