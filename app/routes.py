@@ -102,9 +102,8 @@ def pokeSearchPage(pokemon_id=None):
         return render_template('pokesearch.html',form=form,poke_results=poke_results)
 
     pokemon_name = form.pokemon_name.data.strip().lower()
-    poke_id = Pokedex.names2nums[pokemon_name] #Bug here
-    poke_results = PokeFinder.find_poke(poke_id)
-    if poke_results:
+    if pokemon_name in Pokedex.names2nums:
+        poke_results = PokeFinder.find_poke(Pokedex.names2nums[pokemon_name])
         return render_template('pokesearch.html',form=form,poke_results=poke_results)
     else:
         pokeguess_name = Pokedex.poke_suggest(pokemon_name)
@@ -129,7 +128,7 @@ def myProfilePage():
 
 @app.route('/cancelchallenge/<int:battle_request_id>')
 @login_required
-def cancelchallenge(battle_request_id):
+def cancelChallenge(battle_request_id):
     # Works for canceling own challenge and denying someone else's challenge
 
     # if valid entry
@@ -460,7 +459,7 @@ def populate_datebase_from_api():
 
 @app.route('/acceptchallenge/<int:battle_request_id>')
 @login_required
-def acceptchallenge(battle_request_id):
+def acceptChallenge(battle_request_id):
 
     # Make sure valid input
     if not battle_request_id:
