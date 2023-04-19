@@ -224,11 +224,13 @@ def runCode():
 
     # my_roster = current_user.getRoster()
 
+    print(Pokedex.get_type_effectivity("normal/fire","grass/ghost"))
+
     # a = BattleRequests.query.get(4)
     # print(a.challengee.username)
 
-    pokemon1 = 406 #lantunr
-    pokemon2 = 506  # prinplup
+    pokemon1 = 493 #
+    pokemon2 = 92  # 
     poke_num1 = Pokedex.nums2names[pokemon1]
     poke_num2 = Pokedex.nums2names[pokemon2]
 
@@ -339,7 +341,7 @@ def runCode():
     # print(user1)
     # print(sys.getsizeof(user1))
 
-    # IN PROGRESS CODE TO SIMULAT BATTLE
+    # IN PROGRESS CODE TO SIMULATE BATTLE
     # p1 = PokeFinder.find_poke("porygon-z")
     # p2 = PokeFinder.find_poke("arctozolt")
     # a = battle_test(p1,p2)
@@ -393,11 +395,23 @@ def battle_test(pokedict1,pokedict2):
         level = 50
         section1 = (2*level)/5
         section2 = attacker['attack']/defender['defense']
-        return int(((section1*power*section2)/50)+2)
+        # Result below is prior to accounting for pokemon type
+        result = ((section1*power*section2)/50)+2
+        # Result below takes type inco account
+        result = result * Pokedex.get_type_effectivity(attacker["type"],defender["type"])
+        return int(result)
         
     
     pokedict1["turn-damage"] = damage_each_turn(pokedict1,pokedict2)
     pokedict2["turn-damage"] = damage_each_turn(pokedict2,pokedict1)
+
+    if pokedict1["turn-damage"] == 0 and pokedict2["turn-damage"] == 0:
+        print("Both did no do no damage to eachother, pick random winner")
+        shuffler = [pokedict1,pokedict2]
+        random.shuffle(shuffler)
+        return shuffler[0]
+
+
 
     print("pokedict1",pokedict1['poke_id'],pokedict1['name'],"hp",pokedict1['hp'],"attack",pokedict1['attack'],"defense",pokedict1['defense'],"speed",pokedict1['speed'],"turn-damage",pokedict1["turn-damage"])
     print("pokedict2",pokedict2['poke_id'],pokedict2['name'],"hp",pokedict2['hp'],"attack",pokedict2['attack'],"defense",pokedict2['defense'],"speed",pokedict2['speed'],"turn-damage",pokedict2["turn-damage"])
@@ -428,6 +442,9 @@ def battle_test(pokedict1,pokedict2):
         
         attacker, defender = defender, attacker
         round_num += 1
-    print("There was a tie")
-    return "Tie"
+    
+    # Round lasted too long, picking random pokemon
+    shuffler = [pokedict1,pokedict2]
+    random.shuffle(shuffler)
+    return shuffler[0]
 
