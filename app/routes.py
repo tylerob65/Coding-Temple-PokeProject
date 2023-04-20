@@ -316,7 +316,7 @@ def showProfile(user_id):
         else:
             poke_results_group.append(None)
      
-    return render_template('profile.html',poke_results_group=poke_results_group,username=user_profile.username)
+    return render_template('profile.html',poke_results_group=poke_results_group,username=user_profile.username,user=user_profile)
 
 
 def populate_datebase_from_api():

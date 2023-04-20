@@ -1,12 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<!-- My Profile Header -->
 <h1>{{username}}'s Pr<img id="pball" src="{{ url_for('static', filename='pokeball.png') }}"
         alt="Pokeball from 'https://www.freepnglogos.com/uploads/pokeball-png/pokeball-pokemon-theme-team-ideas-for-pokemon-sun-and-moon-24.png'">file
 </h1>
 
 <br>
 
+<h1>Pokemon</h1>
+<!-- Show Pokemon Cards Section -->
 {% if poke_results_group %}
 <h3>Here are {{username}}'s pokemon!</h3>
 <div class="multicard-display">
@@ -15,6 +18,64 @@
     {% endfor %}
 </div>
 {% endif %}
+
+<!-- Battles Section -->
+<br>
+<h1>Battles</h1>
+<h3>{{user.username}} Battle Record</h3>
+<h5>Wins: {{user.battle_win_count}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Losses:
+    {{user.battle_loss_count}}</h5>
+<br>
+
+<!-- Battles Won -->
+<h3>Battles {{user.username}} Won</h3>
+{% if user.battles_won %}
+
+<table class="table text-center align-middle">
+    <thead>
+        <tr>
+            <th scope="col">Battle ID</th>
+            <th scope="col">Won against</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for battle in user.battles_won %}
+        <tr>
+            <td><a class="poke_link" href="/battle/{{battle.id}}">{{battle.id}}</a></td>
+            <td><a class="poke_link" href="/profiles/{{battle.loser_id}}">{{battle.loser.username}}</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+{% else %}
+<p>{{user.username}} has not won any battles</p>
+{% endif %}
+<br><br>
+
+<!-- Battles Lost -->
+<h3>Battles {{user.username}} Lost</h3>
+{% if user.battles_lost %}
+<table class="table text-center">
+    <thead>
+        <tr>
+            <th scope="col">Battle ID</th>
+            <th scope="col">Lost against</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for battle in user.battles_lost %}
+        <tr>
+            <td><a class="poke_link" href="/battle/{{battle.id}}">{{battle.id}}</a></td>
+            <td><a class="poke_link" href="/profiles/{{battle.winner_id}}">{{battle.winner.username}}</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>{{user.username}} has not lost any battles</p>
+{% endif %}
+<br>
 
 
 {% endblock %}

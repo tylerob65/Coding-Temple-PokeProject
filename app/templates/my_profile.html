@@ -4,9 +4,10 @@
 <!-- My Profile Header -->
 <h1>My Pr<img id="pball" src="{{ url_for('static', filename='pokeball.png') }}"
         alt="Pokeball from 'https://www.freepnglogos.com/uploads/pokeball-png/pokeball-pokemon-theme-team-ideas-for-pokemon-sun-and-moon-24.png'">file</h1>
-<h2>Welcome <b> {{current_user.username}}</b>!</h2>
+<h3>Welcome <b> {{current_user.username}}</b>!</h3>
 <br>
 
+<h1>Pokemon</h1>
 <!-- Not Full Roster Warning -->
 {% if poke_results_group %}
 {% if not current_user.rosterFull() %}
@@ -25,6 +26,8 @@
 <p class="text-danger">You are above PokeScore threshold of {{PokeScore_info["PokeScore_max"]}} by {{PokeScore_info["above_PokeScore_max_amount"]}}, 
     please lower you score by changing up your roster so that you may be eligible to battle</p> 
 {% endif %}
+
+
 <!-- Show Pokemon Cards Section -->
 <h3>Here are your pokemon...</h3>
 <div class="multicard-display">
