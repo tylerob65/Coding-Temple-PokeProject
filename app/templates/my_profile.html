@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<!-- My Profile Header -->
 <h1>My Pr<img id="pball" src="{{ url_for('static', filename='pokeball.png') }}"
         alt="Pokeball from 'https://www.freepnglogos.com/uploads/pokeball-png/pokeball-pokemon-theme-team-ideas-for-pokemon-sun-and-moon-24.png'">file</h1>
 <h2>Welcome <b> {{current_user.username}}</b>!</h2>
 <br>
 
+<!-- Not Full Roster Warning -->
 {% if poke_results_group %}
 {% if not current_user.rosterFull() %}
 <p>Your roster is not full. A full roster consists of 5 pokemon, you will be unable to battle pokemon until your roster is full</p>
@@ -15,11 +17,15 @@
 </div>
 <br>
 {% endif %}
-<br>
 
 
-
-
+<!-- PokeScore -->
+<h3>Roster PokeScore: {{PokeScore_info["my_PokeScore"]}}</h3>
+{%if PokeScore_info["above_PokeScore_max"]%}
+<p class="text-danger">You are above PokeScore threshold of {{PokeScore_info["PokeScore_max"]}} by {{PokeScore_info["above_PokeScore_max_amount"]}}, 
+    please lower you score by changing up your roster so that you may be eligible to battle</p> 
+{% endif %}
+<!-- Show Pokemon Cards Section -->
 <h3>Here are your pokemon...</h3>
 <div class="multicard-display">
 {% for poke_results in poke_results_group %}
@@ -31,13 +37,17 @@
 {% endif %}
 
 
-
+<!-- Battles Section -->
 <br>
 <h1>Battles</h1>
+
+<!-- Battle Record -->
 <h3>Your Battle Record</h3>
 <h5>Wins: {{current_user.battle_win_count}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Losses:
     {{current_user.battle_loss_count}}</h5>
 <br>
+
+<!-- Open Battle Requests Sent To You -->
 <h3>Open Battle Requests Sent To You</h3>
 {% if current_user.challenges_as_challengee %}
 <table class="table text-center align-middle">
@@ -60,6 +70,8 @@
 <p>You have no invites to battle</p>
 {% endif %}
 <br>
+
+<!-- Open Battle Requests You've Sent Out -->
 <h3>Open Battle Requests You've Sent Out</h3>
 {% if current_user.challenges_as_challenger %}
 <table class="table text-center align-middle">
@@ -82,6 +94,7 @@
 {% endif %}
 <br>
 
+<!-- Battles You've Won -->
 <h3>Battles You've Won</h3>
 {% if current_user.battles_won %}
 
@@ -102,14 +115,12 @@
     </tbody>
 
 </table>
-
-
 {% else %}
 <p>You have not won any battles</p>
 {% endif %}
+<br><br>
 
-<br>
-<br>
+<!-- Battles You've Lost -->
 <h3>Battles You've Lost</h3>
 {% if current_user.battles_lost %}
 <table class="table text-center">
@@ -131,22 +142,18 @@
 {% else %}
 <p>You have not lost any battles</p>
 {% endif %}
-
-
-
-
-
 <br>
+
+
+<!-- User Info Section -->
 <h1>Your User Info</h1>
 <p><b>Username</b>: {{current_user.username}}</p>
 <p><b>First Name</b>: {{current_user.first_name}}</p>
 <p><b>Last Name</b>: {{current_user.last_name}}</p>
 <p><b>Email</b>: {{current_user.email}}</p>
-
 <br><br><br>
 
-
-
+<!-- Profile Buttons (ShuffleRoster,EditProfile,DeleteAccount) -->
 <div class="profile-button-holder">
 <a href="/shuffleroster" class="text-decoration-none profile-button"><p>Shuffle Roster</p></a>
 
@@ -155,11 +162,10 @@
 <button type="button" class="profile-button btn btn-danger" data-bs-toggle="modal" data-bs-target="#DeleteAccountModal">
     Delete Account
 </button>
-
 </div>
 
 
-
+<!-- Modal for deleting account -->
 <div class="modal fade" id="DeleteAccountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog .modal-dialog-centered">
         <div class="modal-content">
@@ -178,8 +184,6 @@
     </div>
 </div>
 
-
 <br><br>
-
 
 {% endblock %} 

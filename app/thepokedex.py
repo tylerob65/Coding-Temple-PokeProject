@@ -30,6 +30,9 @@ class Pokedex():
     # in dictionary
     type_dict = type_dict
 
+    # Setting the max PokeScore
+    PokeScore_max = 1250
+
     def poke_suggest(name):
         pokeguess,_ = fuzzprocess.extractOne(name,names2nums.keys())
         return pokeguess

@@ -1,13 +1,10 @@
 from app import app
 from app.forms import PokeSearchForm
-from app.models import User, PokeFinder, BattleRequests, BattleSim, Battles
+from app.models import User, PokeFinder, BattleRequests, BattleSim, Battles, Pokemon
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from app.thepokedex import Pokedex
-import time
-import random
 import json
-import csv
 
 @app.route('/')
 def homePage():
@@ -57,8 +54,6 @@ def addToRoster(poke_id):
     if poke_id in user_roster:
         flash(f"You already have {Pokedex.nums2names[poke_id]} in your roster, you can not add again","danger")
         return redirect(url_for('myProfilePage'))
-
-    # TODO Show error messages for these
 
     user_roster[4] = poke_id
     current_user.setRoster(user_roster)
@@ -123,7 +118,9 @@ def myProfilePage():
         else:
             poke_results_group.append(None)
     
-    return render_template('my_profile.html',poke_results_group=poke_results_group)
+    PokeScore_info = current_user.getRosterPokeScoreInfo()
+
+    return render_template('my_profile.html',poke_results_group=poke_results_group,PokeScore_info=PokeScore_info)
 
 
 @app.route('/cancelchallenge/<int:battle_request_id>')
@@ -184,8 +181,10 @@ def challengeUser(challengee_id):
         flash("You do not have a full roster, you need 5 pokemon to challenge people","danger")
         return redirect(url_for('myProfilePage'))
 
-    # Check if pokescore is below limit
-    # TODO check if pokescore is below limit (use current_user.getRosterPokeScore())
+    # Check if Roster PokeScore is below threshold
+    if current_user.getRosterPokeScore() > Pokedex.PokeScore_max:
+        flash("Your roster PokeScore is too high, please lower before challenging someone to battle","danger")
+        return redirect(url_for('myProfilePage'))
     
     # Check if there is existing challenge
     if BattleRequests.battleRequestPairExists(current_user.id,challengee_id):
@@ -196,28 +195,40 @@ def challengeUser(challengee_id):
         flash("This player is waiting for you to accept their challenge. You must accept before challenging them","danger")
         return redirect(url_for('myProfilePage'))
     
-    
-    
     pokelist = "/".join(map(str,my_roster))
     new_challenge = BattleRequests(current_user.id,challengee_id,pokelist)
     new_challenge.saveToDB()
     flash(f"You successfully challenged {challengee.username}. ","success")
     return redirect(url_for('myProfilePage'))
     
-    
-    # Add to database
-
-
-
-
 
 @app.route('/runcode',methods=['GET'])
 def runCode():
     
     # a = current_user.challenges_as_challengee.challenger
 
-    battle = Battles.query.get(1)
-    print(battle.getBattleDetails())
+    # battle = Battles.query.get(1)
+    # print(battle.getBattleDetails())
+    output = dict()
+    all_pokemon = Pokemon.query.all()
+    i = 0
+    for pokemon in all_pokemon:
+        poke_dict = pokemon.getPokedict()
+        poke_id = poke_dict['poke_id']
+        del poke_dict['poke_id']
+        del poke_dict['sprite']
+        del poke_dict['photo']
+        output[poke_id] = poke_dict
+        
+        i += 1
+        if i % 100 == 0:
+            print(i)
+    
+    
+    with open('all_poke_data_minus_photos.json',"w") as f:
+        json.dump(output,f)
+
+    
 
     # print(current_user.id)
     # challengee_id = 2
@@ -536,7 +547,10 @@ def acceptChallenge(battle_request_id):
         flash("You do not have a full roster, you need 5 pokemon to accept a challenge","danger")
         return redirect(url_for('myProfilePage'))
     
-    # TODO make sure it is below a certain Pokescore
+    # Make Roster PokeScore is below Threshold
+    if current_user.getRosterPokeScore() > Pokedex.PokeScore_max:
+        flash("Your Roster PokeScore is too high, please lower before accepting this battle request","danger")
+        return redirect(url_for('myProfilePage'))
         
     challenger = battle_request.challenger
     challenger_roster = list(map(int,battle_request.challenger_pokelist.split("/")))

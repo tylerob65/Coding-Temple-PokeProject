@@ -109,6 +109,21 @@ class User(db.Model,UserMixin):
                 score += Pokemon.query.get(poke_id).pokescore
         return score
     
+    def getRosterPokeScoreInfo(self):
+        PokeScore_info = dict()
+        PokeScore_max = Pokedex.PokeScore_max
+        PokeScore_info["PokeScore_max"] = PokeScore_max
+        my_PokeScore = self.getRosterPokeScore()
+        PokeScore_info["my_PokeScore"] = my_PokeScore
+        above_PokeScore_max_amount = my_PokeScore - PokeScore_max
+        if above_PokeScore_max_amount > 0:
+            PokeScore_info["above_PokeScore_max"] = True
+            PokeScore_info["above_PokeScore_max_amount"] = above_PokeScore_max_amount
+        else:
+            PokeScore_info["above_PokeScore"] = False
+        return PokeScore_info
+
+
     def addToWinCount(self):
         self.battle_win_count += 1
         self.saveToDB()
