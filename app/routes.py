@@ -1,6 +1,6 @@
 from app import app
 from app.forms import PokeSearchForm
-from app.models import User, PokeFinder, BattleRequests, BattleSim
+from app.models import User, PokeFinder, BattleRequests, BattleSim, Battles
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from app.thepokedex import Pokedex
@@ -222,8 +222,11 @@ def runCode():
     # result = BattleRequests.battleRequestPairExists(1,1)
     # print(result)
 
-    challenger = BattleRequests.query.get(6).challenger
-    print(list(map(int,BattleRequests.query.get(6).challenger_pokelist.split("/"))))
+    # challenger = BattleRequests.query.get(6).challenger
+    # print(list(map(int,BattleRequests.query.get(6).challenger_pokelist.split("/"))))
+
+    
+
 
     # challenger = User.query.get(1)
     # challenger_roster = challenger.getRoster()
@@ -485,16 +488,9 @@ def acceptChallenge(battle_request_id):
         flash("This battle request does not exist","danger")
         return redirect(url_for('myProfilePage'))
     
-    # Make sure user am challengee
+    # Make sure user is challengee
     if current_user.id != battle_request.challengee_id:
         flash("You were not the challengee in this battle request","danger")
-        return redirect(url_for('myProfilePage'))
-
-
-    if current_user.id == battle_request.challengee_id:
-        challenger_username = battle_request.challenger.username
-        battle_request.deleteFromDB()
-        flash(f"You successully cancelled your battle request from {challenger_username}","success")
         return redirect(url_for('myProfilePage'))
     
     # Check if have 5 pokemon
@@ -505,14 +501,35 @@ def acceptChallenge(battle_request_id):
         return redirect(url_for('myProfilePage'))
     
     # TODO make sure it is below a certain Pokescore
-    
-    # At this point we can simulate the battle
-    
+        
     challenger = battle_request.challenger
     challenger_roster = list(map(int,battle_request.challenger_pokelist.split("/")))
     challengee = current_user
     battle_results = BattleSim.sim_battle(challenger,challenger_roster,challengee,challengee_roster)
+    print(battle_results)
+    print("winner was",battle_results["winner"].username)
+    print("loser was",battle_results["loser"].username)
+
+    # Saves new battle to DB
+    new_battle = Battles(battle_results)
+    new_battle.saveToDB()
     
+    # Delete battle request from db
+    battle_request.deleteFromDB()
+
+    # Increment win/loss count
+    battle_results["winner"].addToWinCount()
+    battle_results["loser"].addToLossCount()
+
+    if current_user.id == battle_results["winner"].id:
+        flash(f"Congrats, you won your battle against {battle_results['loser'].username}","success")
+    else:
+        flash(f"Sorry, you lost your battle against {battle_results['winner'].username}","danger")
+    
+    return redirect(url_for('myProfilePage'))
+
+
+
     
     # challengee_roster = 
     # challengee_roster

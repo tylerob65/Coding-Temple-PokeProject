@@ -22,6 +22,8 @@ class User(db.Model,UserMixin):
     poke_slot3 = db.Column(db.Integer)
     poke_slot4 = db.Column(db.Integer)
     poke_slot5 = db.Column(db.Integer)
+    battle_win_count = db.Column(db.Integer,default=0)
+    battle_loss_count = db.Column(db.Integer,default=0)
 
     # Relation to Battle Requests Table
     challenges_as_challenger = db.relationship("BattleRequests",foreign_keys='BattleRequests.challenger_id',back_populates="challenger")
@@ -42,6 +44,8 @@ class User(db.Model,UserMixin):
         self.poke_slot3 = None
         self.poke_slot4 = None
         self.poke_slot5 = None
+        self.battle_win_count = 0
+        self.battle_loss_count = 0
     
     def saveToDB(self):
         db.session.add(self)
@@ -104,6 +108,15 @@ class User(db.Model,UserMixin):
             if poke_id:
                 score += Pokemon.query.get(poke_id).pokescore
         return score
+    
+    def addToWinCount(self):
+        self.battle_win_count += 1
+        self.saveToDB()
+
+    def addToLossCount(self):
+        self.battle_loss_count += 1
+        self.saveToDB()
+
         
 
 class BattleRequests(db.Model):
