@@ -85,7 +85,7 @@
     <tbody>
         {%for challenge in current_user.challenges_as_challenger %}
         <tr>
-            <td><a class="poke_link" href="/profiles/{{challenge.challengee_id}}">{{challenge.challenger.username}}</td></a>
+            <td><a class="poke_link" href="/profiles/{{challenge.challengee_id}}">{{challenge.challengee.username}}</td></a>
             <td><a href="/cancelchallenge/{{challenge.id}}" class="btn btn-secondary" style="margin:5px;font-size:small">Cancel Battle Request</a></td>
         </tr>
         {% endfor %}
