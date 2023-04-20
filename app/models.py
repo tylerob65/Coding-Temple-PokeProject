@@ -235,14 +235,6 @@ class Battles(db.Model):
             battle_details["round_info"].append(round_details)
         return battle_details
 
-            
-
-        
-        
-
-        return battle_details
-
-
 class Pokemon(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String,nullable=False,unique=True)
@@ -289,10 +281,13 @@ class Pokemon(db.Model):
         pokedict['type'] = self.pokemon_type
         return pokedict
     
-    
 
 class PokeFinder():
     def find_poke(pokemon_number):
+        """Takes in pokemon_id and returns pokedict with info
+        about pokemon. Tries to grab info from connected database,
+        if unable to find, requests info from API, added info to
+        connected database, and then returns pokedict"""
         
         if not pokemon_number:
             return False
