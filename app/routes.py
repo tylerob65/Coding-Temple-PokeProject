@@ -562,7 +562,8 @@ def acceptChallenge(battle_request_id):
     else:
         flash(f"Sorry, you lost your battle against {battle_results['winner'].username}","danger")
     
-    return redirect(url_for('myProfilePage'))
+    return redirect(f'/battle/{new_battle.id}')
+    # return redirect(url_for('myProfilePage'))
 
 
 
@@ -588,7 +589,5 @@ def acceptChallenge(battle_request_id):
         # Deletes battle request
         # Saves battle to battle table
         # Updates challenger
-
-    return redirect(url_for('myProfilePage'))
 
 
