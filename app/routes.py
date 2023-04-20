@@ -10,7 +10,8 @@ def homePage():
     if not current_user.is_authenticated:
         return redirect(url_for('auth.loginPage'))
 
-    return render_template('index.html')
+    PokeScore_max = Pokedex.PokeScore_max
+    return render_template('index.html',PokeScore_max=PokeScore_max)
 
 
 @app.route('/pokesearch',methods=["GET","POST"])
