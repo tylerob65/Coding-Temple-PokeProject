@@ -18,7 +18,9 @@
                 <a class="nav-link" href="/signup">Sign Up</a>
                 <a class="nav-link" href="/login">Login</a>
                 {% endif %}
+                {% if current_user.id == 1%}
                 <a class="nav-link" href="/runcode">Run Code</a>
+                {% endif %}
             </div>
         </div>
     </div>
