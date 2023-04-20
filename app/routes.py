@@ -214,8 +214,10 @@ def challengeUser(challengee_id):
 @app.route('/runcode',methods=['GET'])
 def runCode():
     
-    a = current_user.challenges_as_challengee.challenger
-    print(a)
+    # a = current_user.challenges_as_challengee.challenger
+
+    battle = Battles.query.get(1)
+    print(battle.getBattleDetails())
 
     # print(current_user.id)
     # challengee_id = 2
@@ -421,6 +423,24 @@ def showProfile(user_id):
             poke_results_group.append(None)
      
     return render_template('profile.html',poke_results_group=poke_results_group,username=user_profile.username)
+
+@app.route('/battle/<int:battle_id>')
+@login_required
+def showBattle(battle_id):
+    if not battle_id:
+        flash("invalid battle_id provided","danger")
+        return redirect(url_for('homePage'))
+    
+    battle = Battles.query.get(battle_id)
+
+    if not battle:
+        flash("invalid battle_id provided","danger")
+        return redirect(url_for('homePage'))
+    
+    battle_details = battle.getBattleDetails()
+
+    return render_template('battle.html',battle=battle,battle_details=battle_details)
+
 
 def populate_datebase_from_api():
     for i in range(1,1010):

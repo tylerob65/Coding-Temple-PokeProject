@@ -27,6 +27,9 @@
 }
 
 
+.popover-content {
+    white-space: pre-wrap;
+}
 
 .card {
     margin:auto;

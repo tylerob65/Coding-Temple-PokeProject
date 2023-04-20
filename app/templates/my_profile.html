@@ -5,10 +5,7 @@
         alt="Pokeball from 'https://www.freepnglogos.com/uploads/pokeball-png/pokeball-pokemon-theme-team-ideas-for-pokemon-sun-and-moon-24.png'">file</h1>
 <h2>Welcome <b> {{current_user.username}}</b>!</h2>
 <br>
-<h3>Your Battle Record</h3>
-<h5>Wins: {{current_user.battle_win_count}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Losses:
-    {{current_user.battle_loss_count}}</h5>
-<br>
+
 {% if poke_results_group %}
 {% if not current_user.rosterFull() %}
 <p>Your roster is not full. A full roster consists of 5 pokemon, you will be unable to battle pokemon until your roster is full</p>
@@ -21,7 +18,7 @@
 <br>
 
 
-<br>
+
 
 <h3>Here are your pokemon...</h3>
 <div class="multicard-display">
@@ -35,26 +32,118 @@
 
 
 
-<h1>Battles</h1>
-<h3>Open Requests</h3>
-
-
-
-
-
-
-
-<br> <br>
-<div class="text-center">
 <br>
-    <h3>Your Info</h3>
+<h1>Battles</h1>
+<h3>Your Battle Record</h3>
+<h5>Wins: {{current_user.battle_win_count}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Losses:
+    {{current_user.battle_loss_count}}</h5>
+<br>
+<h3>Open Battle Requests Sent To You</h3>
+{% if current_user.challenges_as_challengee %}
+<table class="table text-center align-middle">
+    <thead>
+        <th scope="col">Challenger Username</th>
+        <th scope="col">Accept Battle Request</th>
+        <th scope="col">Reject Battle Request</th>
+    </thead>
+    <tbody>
+        {%for challenge in current_user.challenges_as_challengee %}
+        <tr>
+            <td><a class="poke_link" href="/profiles/{{challenge.challenger_id}}">{{challenge.challenger.username}}</td></a>
+            <td><a href="/acceptchallenge/{{challenge.id}}" class="btn btn-success" style="margin:5px;font-size:small">Accept Battle Request</a></td>
+            <td><a href="/cancelchallenge/{{challenge.id}}" class="btn btn-secondary" style="margin:5px;font-size:small">Reject Battle Request</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>You have no invites to battle</p>
+{% endif %}
+<br>
+<h3>Open Battle Requests You've Sent Out</h3>
+{% if current_user.challenges_as_challenger %}
+<table class="table text-center align-middle">
+    <thead>
+        <th scope="col">Challengee Username</th>
+        <th scope="col">Cancel Battle Request</th>
+    </thead>
+    <tbody>
+        {%for challenge in current_user.challenges_as_challenger %}
+        <tr>
+            <td><a class="poke_link" href="/profiles/{{challenge.challengee_id}}">{{challenge.challenger.username}}</td></a>
+            <td><a href="/cancelchallenge/{{challenge.id}}" class="btn btn-secondary" style="margin:5px;font-size:small">Cancel Battle Request</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+<p>There are no open battle invites you have sent out</p>
+{% endif %}
+<br>
+
+<h3>Battles You've Won</h3>
+{% if current_user.battles_won %}
+
+<table class="table text-center">
+    <thead>
+        <tr>
+            <th scope="col">Battle ID</th>
+            <th scope="col">Won against</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for battle in current_user.battles_won %}
+        <tr>
+            <td><a class="poke_link" href="/battle/{{battle.id}}">{{battle.id}}</a></td>
+            <td><a class="poke_link" href="/profiles/{{battle.loser_id}}">{{battle.loser.username}}</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+
+{% else %}
+<p>You have not won any battles</p>
+{% endif %}
+
+<br>
+<br>
+<h3>Battles You've Lost</h3>
+{% if current_user.battles_lost %}
+<table class="table text-center">
+    <thead>
+        <tr>
+            <th scope="col">Battle ID</th>
+            <th scope="col">Lost against</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for battle in current_user.battles_lost %}
+        <tr>
+            <td><a class="poke_link" href="/battle/{{battle.id}}">{{battle.id}}</a></td>
+            <td><a class="poke_link" href="/profiles/{{battle.winner_id}}">{{battle.winner.username}}</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>You have not lost any battles</p>
+{% endif %}
+
+
+
+
+
+<br>
+<h1>Your User Info</h1>
 <p><b>Username</b>: {{current_user.username}}</p>
 <p><b>First Name</b>: {{current_user.first_name}}</p>
 <p><b>Last Name</b>: {{current_user.last_name}}</p>
 <p><b>Email</b>: {{current_user.email}}</p>
-<br>
-</div>
-<br>
+
+<br><br><br>
 
 
 

@@ -183,6 +183,52 @@ class Battles(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    def getBattleDetails(self):
+        battle_details = dict()
+        battle_details["winner"] = self.winner
+        battle_details["winner_id"] = self.winner_id
+        battle_details["winner_username"] = self.winner.username
+        battle_details["loser"] = self.loser
+        battle_details["loser_id"] = self.loser_id
+        battle_details["loser_username"] = self.loser.username
+
+        winner_pokemon_list = list(map(int,self.winner_pokemon.split("/")))
+        loser_pokemon_list = list(map(int,self.loser_pokemon.split("/")))
+        # winner_won_round_list = list(map(bool,list(map(int,self.winner_round_wins))))
+        print(self.winner_round_wins)
+        winner_won_round_list = list(map(int,self.winner_round_wins.split("/")))
+        print(winner_won_round_list)
+
+
+        battle_details["round_info"] = []
+        for round in range(5):
+            round_details = dict()
+            round_details["winner_pokemon_id"] = winner_pokemon_list[round]
+            round_details["loser_pokemon_id"] = loser_pokemon_list[round]
+            winner_pokemon = Pokemon.query.get(winner_pokemon_list[round])
+            loser_pokemon = Pokemon.query.get(loser_pokemon_list[round])
+            round_details["winner_pokemon"] = winner_pokemon
+            round_details["loser_pokemon"] = loser_pokemon
+            round_details["winner_pokemon_name"] = Pokedex.nums2names[winner_pokemon_list[round]]
+            round_details["loser_pokemon_name"] = Pokedex.nums2names[loser_pokemon_list[round]]
+            round_details["winner_won_round"] = winner_won_round_list[round]
+            if winner_won_round_list[round]:
+                round_winner_username = battle_details["winner_username"]
+            else:
+                round_winner_username = battle_details["loser_username"]
+            round_details["round_winner_username"] = round_winner_username
+            round_details["round_num"] = round+1
+
+            battle_details["round_info"].append(round_details)
+        return battle_details
+
+            
+
+        
+        
+
+        return battle_details
+
 
 class Pokemon(db.Model):
     id = db.Column(db.Integer,primary_key=True)

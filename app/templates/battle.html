@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Battle Summary</h1>
+
+<h3>  Winner: <a class="poke_link" href="/profiles/{{battle_details['winner_id']}}">{{battle_details['winner_username']}}</a></h3>
+<h3>  Loser: <a class="poke_link" href="/profiles/{{battle_details['loser_id']}}">{{battle_details['loser_username']}}</a></h3>
+
+<table class="table text-center align-middle">
+    <thead>
+        <tr>
+            <th scope="col">Round Number</th>
+            <th scope="col">{{battle_details['winner_username']}}'s Pokemon</th>
+            <th scope="col">{{battle_details['loser_username']}}s's Pokemon</th>
+            <th scope="col">Round Winner</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for round in battle_details["round_info"] %}
+        <tr>
+            <th scope="row">{{round["round_num"]}}</th>
+            <td>
+                <a class="text-decoration-none" href="{{url_for('pokeSearchPage',pokemon_id=round['winner_pokemon_id'])}}">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{round['winner_pokemon_id']}}.png"
+                        style="width:90px" data-html="true" data-bs-toggle="tooltip" data-bs-title="{{round['winner_pokemon_name']}}" alt=""
+                        data-bs-custom-class="custom-tooltip">
+                </a>
+            </td>
+            <td>
+                <a class="text-decoration-none" href="{{url_for('pokeSearchPage',pokemon_id=round['loser_pokemon_id'])}}">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{round['loser_pokemon_id']}}.png"
+                        style="width:90px" data-bs-toggle="tooltip" data-bs-title="{{round['loser_pokemon_name']}}" alt=""
+                        data-bs-custom-class="custom-tooltip">
+                </a>
+            </td>
+            <td>{{round["round_winner_username"]}}</td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+
+{% endblock %}
