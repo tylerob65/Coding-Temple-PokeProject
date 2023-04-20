@@ -222,11 +222,14 @@ def runCode():
     # result = BattleRequests.battleRequestPairExists(1,1)
     # print(result)
 
-    challenger = User.query.get(1)
-    challenger_roster = challenger.getRoster()
-    challengee = User.query.get(3)
-    challengee_roster = challengee.getRoster()
-    print(BattleSim.sim_battle(challenger,challenger_roster,challengee,challengee_roster))
+    challenger = BattleRequests.query.get(6).challenger
+    print(list(map(int,BattleRequests.query.get(6).challenger_pokelist.split("/"))))
+
+    # challenger = User.query.get(1)
+    # challenger_roster = challenger.getRoster()
+    # challengee = User.query.get(3)
+    # challengee_roster = challengee.getRoster()
+    # print(BattleSim.sim_battle(challenger,challenger_roster,challengee,challengee_roster))
     
 
 
@@ -505,6 +508,16 @@ def acceptChallenge(battle_request_id):
     
     # At this point we can simulate the battle
     
+    challenger = battle_request.challenger
+    challenger_roster = list(map(int,battle_request.challenger_pokelist.split("/")))
+    challengee = current_user
+    battle_results = BattleSim.sim_battle(challenger,challenger_roster,challengee,challengee_roster)
+    
+    
+    # challengee_roster = 
+    # challengee_roster
+    # battle_results = BattleSim.sim_battle()
+
     # Give battle simulator info it needs to run
     # SimulateBattle
     # Return dictionary results

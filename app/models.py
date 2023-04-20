@@ -23,8 +23,13 @@ class User(db.Model,UserMixin):
     poke_slot4 = db.Column(db.Integer)
     poke_slot5 = db.Column(db.Integer)
 
+    # Relation to Battle Requests Table
     challenges_as_challenger = db.relationship("BattleRequests",foreign_keys='BattleRequests.challenger_id',back_populates="challenger")
     challenges_as_challengee = db.relationship("BattleRequests",foreign_keys='BattleRequests.challengee_id',back_populates="challengee")
+
+    # Relation to Battles Table
+    battles_won = db.relationship("Battles",foreign_keys="Battles.winner_id",back_populates="winner")
+    battles_lost = db.relationship("Battles",foreign_keys="Battles.loser_id",back_populates="loser")
 
     def __init__(self,username,email,first_name,last_name,password):
         self.username = username
@@ -130,6 +135,37 @@ class BattleRequests(db.Model):
     def battleRequestPairExists(challenger_id,challengee_id):
         return bool(BattleRequests.query.filter(db.and_(BattleRequests.challengee_id==challengee_id,BattleRequests.challenger_id==challenger_id)).first())
 
+class Battles(db.Model):
+    __tablename__ = 'battles'
+    id = db.Column(db.Integer,primary_key=True)
+    winner_id = db.Column(db.Integer,db.ForeignKey(User.id),nullable=False)
+    winner = db.relationship("User",back_populates="battles_won",foreign_keys=[winner_id])
+    
+    loser_id = db.Column(db.Integer,db.ForeignKey(User.id),nullable=False)
+    loser = db.relationship("User",back_populates="battles_lost",foreign_keys=[loser_id])
+
+    battle_date = db.Column(db.DateTime, nullable = False, default=datetime.utcnow())
+
+    winner_was_challenger = db.Column(db.Boolean,nullable=False)
+    winner_pokemon = db.Column(db.String(40),nullable=False)
+    loser_pokemon = db.Column(db.String(40),nullable=False)
+    winner_round_wins = db.Column(db.String(15),nullable=False)
+
+    def __init__(self,battle_results):
+        self.winner_id = battle_results["winner"].id
+        self.loser_id = battle_results["loser"].id
+        self.winner_was_challenger = battle_results["winner_was_challenger"]
+        self.winner_pokemon = battle_results["winner_roster_string"]
+        self.loser_pokemon = battle_results["loser_roster_string"]
+        self.winner_round_wins = battle_results["winner_round_wins"]
+
+    def saveToDB(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def deleteFromDB(self):
+        db.session.delete(self)
+        db.session.commit()
 
 
 class Pokemon(db.Model):
@@ -281,7 +317,7 @@ class BattleSim():
                 "loser":challengee,
                 "loser_roster_string":challengee_roster_string,
                 "winner_round_wins":winner_round_wins,
-                "winner_was_challeger":True,
+                "winner_was_challenger":True,
             }
         else: #Challengee won
             winner_round_wins = "/".join(map(str,challengee_round_wins))
@@ -291,7 +327,7 @@ class BattleSim():
                 "loser":challenger,
                 "loser_roster_string":challenger_roster_string,
                 "winner_round_wins":winner_round_wins,
-                "winner_was_challeger":False,
+                "winner_was_challenger":False,
             }
         return battle_results
 
