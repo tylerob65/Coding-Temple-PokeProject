@@ -3,35 +3,33 @@
 <h1>H<img id="pball" src="{{ url_for('static', filename='pokeball.png') }}"
         alt="Pokeball from 'https://www.freepnglogos.com/uploads/pokeball-png/pokeball-pokemon-theme-team-ideas-for-pokemon-sun-and-moon-24.png'">mepage</h1>
 
-<h3>Welcome to PokeStop!</h3>
-<p>PokeStop is for Pokemon Trainers!</p>
+<h3>Welcome to PokéStop!</h3>
+<p>PokéStop is for Pokémon Trainers!</p>
 <h3>How it works</h3>
 <p>
-        Trainers create rosters of 5 Pokemon, that they can then use to battle other trainers. Head on over to your profile
-        page. That is where you can see your current roster. You can remove Pokemon from your roster, and then go on over to
-        PokeSearch to add any Pokemon you want. The world is your cloyster!
-        <br>
-        <em> the catch… </em>
-        <br>
-        The total PokeScore of your roster can’t be over {{PokeScore_max}}!
+        Trainers create rosters of 5 Pokémon, that they can then use to battle other trainers. Head on over to your profile
+        page. That is where you can see your current roster. You can remove Pokémon from your roster, and then go on over to
+        PokéSearch to add any Pokémon you want. The world is your cloyster!
+        <em> The catch… </em>
+        the total PokéScore of your roster can’t be over {{PokeScore_max}}!
 </p>
 <h3>How it works</h3>
-<p>Every Pokemon has been assigned a PokeScore based on their stats. Your total team PokeScore is the sum of the PokeScore
-of every Pokemon on your roster. This makes it so that you can’t just put legendaries on your roster, and instead need to pick
-and chose a good balance of Pokemon based on their stats and their types. Once you have 5 Pokemon on your roster with a
-total PokeScore at {{PokeScore_max}} or below, you are then ready to battle!</p>
+<p>Every Pokémon has been assigned a PokéScore based on their stats. Your total team PokéScore is the sum of the PokéScore
+of every Pokémon on your roster. This makes it so that you can’t just put legendaries on your roster, and instead need to pick
+and chose a good balance of Pokémon based on their stats and their types. Once you have 5 Pokémon on your roster with a
+total PokéScore at {{PokeScore_max}} or below, you are then ready to battle!</p>
 <h3>How Battles Work</h3>
 <p>When the trainer you challenge accepts your battle challenge, or when you accept the battle challenge of another
-training, the battle begins! Your Pokemon and their Pokemon are randomly paired up. Each Pokemon pair will battle it out
-in their own round. You win the overall battle if your Pokemon win more rounds then your opponent’s Pokemon</p>
+training, the battle begins! Your Pokémon and their Pokémon are randomly paired up. Each Pokémon pair will battle it out
+in their own round. You win the overall battle if your Pokémon win more rounds then your opponent’s Pokémon</p>
 <h3>How Battle Rounds Work</h3>
-<p>Each round consists of two Pokemon facing off. The Pokemon with the higher speed attacks first. The damage done by the
+<p>Each round consists of two Pokémon facing off. The Pokémon with the higher speed attacks first. The damage done by the
 attack is based on the Attack stat of the attacker, the defense stat of the defender, and it stems from the damage
-calculation used in <a class="poke_link" href="https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward">Pokemon Generation V and onward</a>. The damage done 
+calculation used in <a class="poke_link" href="https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward">Pokémon Generation V and onward</a>. The damage done 
 also  <a class="poke_link" href="https://pokemondb.net/type">takes into account the types</a>  (i.e fire, water,
-etc) of the two Pokemon. The damage done subtracts for the HP of the defending Pokemon. After being attacked, the
-defender then takes a turn attacking. The Pokemon continue to take turns until one runs out of health and faints. The
-last Pokemon standing wins the round!
+etc) of the two Pokémon. The damage done subtracts for the HP of the defending Pokémon. After being attacked, the
+defender then takes a turn attacking. The Pokémon continue to take turns until one runs out of health and faints. The
+last Pokémon standing wins the round!
 </p>
 
 {% endblock %}

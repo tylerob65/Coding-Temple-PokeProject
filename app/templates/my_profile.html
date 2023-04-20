@@ -7,29 +7,29 @@
 <h3>Welcome <b> {{current_user.username}}</b>!</h3>
 <br>
 
-<h1>Pokemon</h1>
+<h1>Pokémon</h1>
 <!-- Not Full Roster Warning -->
 {% if poke_results_group %}
 {% if not current_user.rosterFull() %}
-<p>Your roster is not full. A full roster consists of 5 pokemon, you will be unable to battle pokemon until your roster is full</p>
-<p>Head on over to <a class="poke_link" href="/pokesearch">PokeSearch</a> to look up specific pokemon to add to your team or hit the button below to add random pokemon</p>
+<p>Your roster is not full. A full roster consists of 5 Pokémon, you will be unable to battle Pokémon until your roster is full</p>
+<p>Head on over to <a class="poke_link" href="/pokesearch">PokéSearch</a> to look up specific Pokémon to add to your team or hit the button below to add random Pokémon</p>
 <div class="text-center">
-    <a href="/addrandompokemon" class="btn btn-primary">Add Random Pokemon To Team</a>
+    <a href="/addrandompokemon" class="btn btn-primary">Add Random Pokémon To Team</a>
 </div>
 <br>
 {% endif %}
 
 
 <!-- PokeScore -->
-<h3>Roster PokeScore: {{PokeScore_info["my_PokeScore"]}}</h3>
+<h3>Roster PokéScore: {{PokeScore_info["my_PokeScore"]}}</h3>
 {%if PokeScore_info["above_PokeScore_max"]%}
-<p class="text-danger">You are above PokeScore threshold of {{PokeScore_info["PokeScore_max"]}} by {{PokeScore_info["above_PokeScore_max_amount"]}}, 
+<p class="text-danger">You are above PokéScore threshold of {{PokeScore_info["PokeScore_max"]}} by {{PokeScore_info["above_PokeScore_max_amount"]}}, 
     please lower you score by changing up your roster so that you may be eligible to battle</p> 
 {% endif %}
 
 
 <!-- Show Pokemon Cards Section -->
-<h3>Here are your pokemon...</h3>
+<h3>Here are your Pokémon...</h3>
 <div class="multicard-display">
 {% for poke_results in poke_results_group %}
 
