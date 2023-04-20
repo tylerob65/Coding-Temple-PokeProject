@@ -4,8 +4,11 @@
 <h1>My Pr<img id="pball" src="{{ url_for('static', filename='pokeball.png') }}"
         alt="Pokeball from 'https://www.freepnglogos.com/uploads/pokeball-png/pokeball-pokemon-theme-team-ideas-for-pokemon-sun-and-moon-24.png'">file</h1>
 <h2>Welcome <b> {{current_user.username}}</b>!</h2>
-
-
+<br>
+<h3>Your Battle Record</h3>
+<h5>Wins: {{current_user.battle_win_count}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Losses:
+    {{current_user.battle_loss_count}}</h5>
+<br>
 {% if poke_results_group %}
 {% if not current_user.rosterFull() %}
 <p>Your roster is not full. A full roster consists of 5 pokemon, you will be unable to battle pokemon until your roster is full</p>
@@ -15,11 +18,11 @@
 </div>
 <br>
 {% endif %}
-<h3>Your Battle Record</h3>
-<p>Wins: {{current_user.battle_win_count}}</p>
-<p>Losses: {{current_user.battle_loss_count}}</p>
+<br>
+
 
 <br>
+
 <h3>Here are your pokemon...</h3>
 <div class="multicard-display">
 {% for poke_results in poke_results_group %}
@@ -30,7 +33,14 @@
 </div>
 {% endif %}
 
-<h3>Your Open Battle Requests</h3>
+
+
+<h1>Battles</h1>
+<h3>Open Requests</h3>
+
+
+
+
 
 
 

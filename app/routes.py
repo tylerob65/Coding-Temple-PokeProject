@@ -392,7 +392,16 @@ def runCode():
 @login_required
 def showProfiles():
     all_users = User.query.all()
-    return render_template('profile_explorer.html',all_users=all_users,BattleRequests=BattleRequests)
+
+    my_challengers = dict()
+    for battle_request in current_user.challenges_as_challengee:
+        my_challengers[battle_request.challenger] = battle_request
+    
+    my_challengees = dict()
+    for battle_request in current_user.challenges_as_challenger:
+        my_challengees[battle_request.challengee] = battle_request
+    
+    return render_template('profile_explorer.html',all_users=all_users,BattleRequests=BattleRequests,my_challengers=my_challengers,my_challengees=my_challengees)
 
 @app.route('/profiles/<int:user_id>')
 @login_required
@@ -410,6 +419,7 @@ def showProfile(user_id):
             poke_results_group.append(PokeFinder.find_poke(poke_id))
         else:
             poke_results_group.append(None)
+     
     return render_template('profile.html',poke_results_group=poke_results_group,username=user_profile.username)
 
 def populate_datebase_from_api():

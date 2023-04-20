@@ -7,49 +7,49 @@
 
 <br>
 
-<table class="table">
-<thead>
-    <tr class = text-center>
-        <th scope='col' class='text-start'>Username</th>
-        <th scope='col'>Wins/Losses</th>
-        <th scope='col'>Pokemon Roster</th>
-        <th scope='col'>Battle Requests</th>
-    </tr>
-    <tbody>
-        {% for user in all_users %}
-        {% if user != current_user %}
+<div class="multicard-display" style="justify-items: start;">
+{% for user in all_users %}
+{% if user != current_user %}
+
+<div class="card profile-explore-card" style="align-items: start;">
+    <div class="card-body">
+        <h5 class="text-center"><a class="poke_link" href="{{url_for('showProfile',user_id=user.id)}}">{{user.username}}</a></h3>
         
-        <tr>
-        <td class="align-middle"><a class ="poke_link" href="{{url_for('showProfile',user_id=user.id)}}">{{user.username}}</a></td>
-        <td class="align-middle text-center">{{user.battle_win_count}}/{{user.battle_loss_count}}</td>
-        <td>
+            <p style="margin-bottom:0;"><b>Wins</b>: <span style="float:right;">{{user.battle_win_count}}</span></p>
+            <p style="margin-bottom:0;"><b>Losses</b>: <span style="float:right;">{{user.battle_loss_count}}</span></p>
+            <p style="margin-bottom: 0;"> <b>Current Roster...</b> </p>
+            <div class="flex justify-content:space-around">
             {% for pokemon in user.getRosterNumsAndNames() %}
+            
             <a class="text-decoration-none" href="{{url_for('pokeSearchPage',pokemon_id=pokemon[0])}}">
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{pokemon[0]}}.png"style="width:50px" data-bs-toggle="tooltip" data-bs-title="{{pokemon[1]}}" alt="" data-bs-custom-class="custom-tooltip">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{pokemon[0]}}.png"
+                    style="width:50px" data-bs-toggle="tooltip" data-bs-title="{{pokemon[1]}}" alt=""
+                    data-bs-custom-class="custom-tooltip">
             </a>
             {% endfor %}
-            
-
-        </td>
-        <td>
-            {% for battle_request in BattleRequests.battleRequestPair(user.id,current_user.id) %}
-            <div class="col-6">
-                <a href="" class="btn btn-success" style="margin:5px">Accept Request</a>
-                <a href="" class="btn btn-secondary" style="margin:5px">Reject Request</a>
             </div>
+            {% if user in my_challengers %}
+            <div class="text-center"><a href="/acceptchallenge/{{my_challengers[user].id}}" class="btn btn-success" style="margin:5px;font-size:small">Accept Battle Request</a></div>
+            <div class="text-center"><a href="/cancelchallenge/{{my_challengers[user].id}}" class="btn btn-secondary"style="margin:5px;font-size:small">Reject Battle Request</a></div>
+            
+            {% elif user in my_challengees %}
+            <div class="text-center"><a href="/cancelchallenge/{{my_challengees[user].id}}" class="btn btn-secondary" style="margin:5px;font-size:small">Cancel Request</a></div>
+            {% else %}
+            <div class="text-center"><a href="/challenge/{{user.id}}" class="btn btn-success" style="margin:5px;font-size:small">Challenge To Battle</a></div>
+            {% endif %}
+
+
+            {% for battle_request in BattleRequests.battleRequestPair(current_user.id,user.id) %}
             {% endfor %}
-        </td>
-        </tr>
+
+
         
-        {% endif %}
-        {% endfor %}
-    </tbody>
-</thead>
+    </div>
 
-</table>
-
-
-
+</div>
+{% endif %}
+{% endfor %}
+</div>
 
 
 <!-- {% if poke_results_group %}

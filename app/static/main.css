@@ -26,10 +26,16 @@
     margin: auto;
 }
 
+
+
 .card {
     margin:auto;
     width: 14rem;
     transition: 0.15s background-color ease-in-out, 0.15s transform ease-in-out;
+}
+
+.profile-explore-card {
+    margin:10px 5px 0px 5px;
 }
 
 .card:hover {
