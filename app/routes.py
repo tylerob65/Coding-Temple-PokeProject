@@ -1,6 +1,6 @@
 from app import app
 from app.forms import PokeSearchForm
-from app.models import User, PokeFinder, BattleRequests
+from app.models import User, PokeFinder, BattleRequests, BattleSim
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from app.thepokedex import Pokedex
@@ -221,6 +221,14 @@ def runCode():
     # result = BattleRequests.query.filter(db.and_(BattleRequests.challengee_id==challengee_id,BattleRequests.challenger_id==current_user.id)).all()
     # result = BattleRequests.battleRequestPairExists(1,1)
     # print(result)
+
+    challenger = User.query.get(1)
+    challenger_roster = challenger.getRoster()
+    challengee = User.query.get(3)
+    challengee_roster = challengee.getRoster()
+    print(BattleSim.sim_battle(challenger,challenger_roster,challengee,challengee_roster))
+    
+
 
     # my_roster = current_user.getRoster()
 

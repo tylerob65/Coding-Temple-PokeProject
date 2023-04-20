@@ -243,6 +243,7 @@ class BattleSim():
         
         # Will be 1 for each round challenger wins, 0 if challenger lost
         challenger_round_wins = []
+        challengee_round_wins = []
         
         for challenger_pokemon_id, challengee_pokemon_id in zip(challenger_roster,challengee_roster):
             # Get Challenger Pokedict and add flag
@@ -254,16 +255,46 @@ class BattleSim():
             challengee_pokedict["ChallengersPokemon"] = False
 
             # Simulate Battle
-            winner_pokedict = BattleSim.sim_battle_round(challenger_pokedict,challengee_pokedict)
+            winner_pokedict = BattleSim.sim_battle_round_verbose(challenger_pokedict,challengee_pokedict)
 
-            # Challenger won
+            # Challenger won round
             if winner_pokedict["ChallengersPokemon"]:
                 challenger_rounds_won += 1
                 challenger_round_wins.append(1)
-            else:
+                challengee_round_wins.append(0)
+            else: # Challengee won round
                 challenger_round_wins.append(0)
-            
-        return 
+                challengee_round_wins.append(1)
+        
+        battle_results = dict()
+        
+        challenger_roster_string = "/".join(map(str,challenger_roster))
+        challengee_roster_string = "/".join(map(str,challengee_roster))
+
+        # Challenger won battle
+        if challenger_rounds_won >= 3:
+            winner_round_wins = "/".join(map(str,challenger_round_wins))
+            # Challenger_round_wins
+            battle_results = {
+                "winner":challenger,
+                "winner_roster_string":challenger_roster_string,
+                "loser":challengee,
+                "loser_roster_string":challengee_roster_string,
+                "winner_round_wins":winner_round_wins,
+                "winner_was_challeger":True,
+            }
+        else: #Challengee won
+            winner_round_wins = "/".join(map(str,challengee_round_wins))
+            battle_results = {
+                "winner":challengee,
+                "winner_roster_string":challengee_roster_string,
+                "loser":challenger,
+                "loser_roster_string":challenger_roster_string,
+                "winner_round_wins":winner_round_wins,
+                "winner_was_challeger":False,
+            }
+        return battle_results
+
 
     def sim_battle_round(pokedict1,pokedict2):
         def damage_each_turn(attacker,defender):
