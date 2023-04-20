@@ -6,13 +6,12 @@
 <h3>  Winner: <a class="poke_link" href="/profiles/{{battle_details['winner_id']}}">{{battle_details['winner_username']}}</a></h3>
 <h3>  Loser: <a class="poke_link" href="/profiles/{{battle_details['loser_id']}}">{{battle_details['loser_username']}}</a></h3>
 
-<table class="table text-center align-middle">
+<table class="table text-left align-middle">
     <thead>
         <tr>
-            <th scope="col">Round Number</th>
+            <th scope="col">Round&nbsp;#</th>
             <th scope="col">{{battle_details['winner_username']}}'s Pokemon</th>
             <th scope="col">{{battle_details['loser_username']}}s's Pokemon</th>
-            <th scope="col">Round Winner</th>
         </tr>
     </thead>
     <tbody>
@@ -25,6 +24,19 @@
                         style="width:90px" data-html="true" data-bs-toggle="tooltip" data-bs-title="{{round['winner_pokemon_name']}}" alt=""
                         data-bs-custom-class="custom-tooltip">
                 </a>
+                <p style="margin:0"><b>Name:</b></p>
+                <p style="margin:0">{{round["winner_pokemon_name"].title()}}</p>
+                <p style="margin:0"><b>PokeScore:</b></p>
+                <p style="margin:0">{{round["winner_pokemon"].pokescore}}</p>
+                <p style="margin:0"><b>Type:</b></p>
+                <p style="margin:0">{{round["winner_pokemon"].pokemon_type}}</p>
+                <p style="margin:0"><b>Type Attack Multiplier:</b></p>
+                <p style="margin:0">{{round["winner_pokemon_attack_mult"]}}</p>
+                {%if round["winner_won_round"]==1 %}
+                <p style="margin:0" class="text-danger"><b>Winner</b></p>
+                {% else %}
+                <p style="margin:0" class="text-secondary"><b>Loser</b></p>
+                {% endif %}
             </td>
             <td>
                 <a class="text-decoration-none" href="{{url_for('pokeSearchPage',pokemon_id=round['loser_pokemon_id'])}}">
@@ -32,8 +44,20 @@
                         style="width:90px" data-bs-toggle="tooltip" data-bs-title="{{round['loser_pokemon_name']}}" alt=""
                         data-bs-custom-class="custom-tooltip">
                 </a>
+                <p style="margin:0"><b>Name:</b></p>
+                <p style="margin:0">{{round["loser_pokemon_name"].title()}}</p>
+                <p style="margin:0"><b>PokeScore:</b></p>
+                <p style="margin:0">{{round["loser_pokemon"].pokescore}}</p>
+                <p style="margin:0"><b>Type:</b></p>
+                <p style="margin:0">{{round["loser_pokemon"].pokemon_type}}</p>
+                <p style="margin:0"><b>Type Attack Multiplier:</b></p>
+                <p style="margin:0">{{round["loser_pokemon_attack_mult"]}}</p>
+                {%if round["winner_won_round"]==0 %}
+                <p style="margin:0" class="text-danger"><b>Winner</b></p>
+                {% else %}
+                <p style="margin:0" class="text-secondary"><b>Loser</b></p>
+                {% endif %}
             </td>
-            <td>{{round["round_winner_username"]}}</td>
         </tr>
         {% endfor %}
 

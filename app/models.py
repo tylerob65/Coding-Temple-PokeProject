@@ -217,23 +217,21 @@ class Battles(db.Model):
 
         battle_details["round_info"] = []
         for round in range(5):
-            round_details = dict()
-            round_details["winner_pokemon_id"] = winner_pokemon_list[round]
-            round_details["loser_pokemon_id"] = loser_pokemon_list[round]
             winner_pokemon = Pokemon.query.get(winner_pokemon_list[round])
             loser_pokemon = Pokemon.query.get(loser_pokemon_list[round])
-            round_details["winner_pokemon"] = winner_pokemon
-            round_details["loser_pokemon"] = loser_pokemon
-            round_details["winner_pokemon_name"] = Pokedex.nums2names[winner_pokemon_list[round]]
-            round_details["loser_pokemon_name"] = Pokedex.nums2names[loser_pokemon_list[round]]
-            round_details["winner_won_round"] = winner_won_round_list[round]
-            if winner_won_round_list[round]:
-                round_winner_username = battle_details["winner_username"]
-            else:
-                round_winner_username = battle_details["loser_username"]
-            round_details["round_winner_username"] = round_winner_username
-            round_details["round_num"] = round+1
-
+            
+            round_details = {
+                "winner_pokemon":winner_pokemon,
+                "loser_pokemon":loser_pokemon,
+                "winner_pokemon_id":winner_pokemon_list[round],
+                "loser_pokemon_id":loser_pokemon_list[round],
+                "winner_pokemon_name":Pokedex.nums2names[winner_pokemon_list[round]],
+                "loser_pokemon_name":Pokedex.nums2names[loser_pokemon_list[round]],
+                "winner_won_round":winner_won_round_list[round],
+                "winner_pokemon_attack_mult":Pokedex.get_type_effectivity(winner_pokemon.pokemon_type,loser_pokemon.pokemon_type),
+                "loser_pokemon_attack_mult":Pokedex.get_type_effectivity(loser_pokemon.pokemon_type,winner_pokemon.pokemon_type),
+                "round_num":round+1,
+            }
             battle_details["round_info"].append(round_details)
         return battle_details
 
