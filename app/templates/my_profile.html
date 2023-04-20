@@ -15,6 +15,11 @@
 </div>
 <br>
 {% endif %}
+<h3>Your Battle Record</h3>
+<p>Wins: {{current_user.battle_win_count}}</p>
+<p>Losses: {{current_user.battle_loss_count}}</p>
+
+<br>
 <h3>Here are your pokemon...</h3>
 <div class="multicard-display">
 {% for poke_results in poke_results_group %}
@@ -24,6 +29,11 @@
 {% endfor %}
 </div>
 {% endif %}
+
+<h3>Your Open Battle Requests</h3>
+
+
+
 <br> <br>
 <div class="text-center">
 <br>

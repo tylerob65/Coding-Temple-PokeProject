@@ -147,6 +147,9 @@ class BattleRequests(db.Model):
     
     def battleRequestPairExists(challenger_id,challengee_id):
         return bool(BattleRequests.query.filter(db.and_(BattleRequests.challengee_id==challengee_id,BattleRequests.challenger_id==challenger_id)).first())
+    
+    def battleRequestPair(challenger_id,challengee_id):
+        return BattleRequests.query.filter(db.and_(BattleRequests.challengee_id==challengee_id,BattleRequests.challenger_id==challenger_id))
 
 class Battles(db.Model):
     __tablename__ = 'battles'

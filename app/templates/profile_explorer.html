@@ -9,22 +9,39 @@
 
 <table class="table">
 <thead>
-    <tr>
-        <th scope='col'>Username</th>
+    <tr class = text-center>
+        <th scope='col' class='text-start'>Username</th>
+        <th scope='col'>Wins/Losses</th>
         <th scope='col'>Pokemon Roster</th>
+        <th scope='col'>Battle Requests</th>
     </tr>
     <tbody>
         {% for user in all_users %}
+        {% if user != current_user %}
+        
         <tr>
         <td class="align-middle"><a class ="poke_link" href="{{url_for('showProfile',user_id=user.id)}}">{{user.username}}</a></td>
+        <td class="align-middle text-center">{{user.battle_win_count}}/{{user.battle_loss_count}}</td>
         <td>
             {% for pokemon in user.getRosterNumsAndNames() %}
             <a class="text-decoration-none" href="{{url_for('pokeSearchPage',pokemon_id=pokemon[0])}}">
             <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{pokemon[0]}}.png"style="width:50px" data-bs-toggle="tooltip" data-bs-title="{{pokemon[1]}}" alt="" data-bs-custom-class="custom-tooltip">
             </a>
             {% endfor %}
+            
+
+        </td>
+        <td>
+            {% for battle_request in BattleRequests.battleRequestPair(user.id,current_user.id) %}
+            <div class="col-6">
+                <a href="" class="btn btn-success" style="margin:5px">Accept Request</a>
+                <a href="" class="btn btn-secondary" style="margin:5px">Reject Request</a>
+            </div>
+            {% endfor %}
         </td>
         </tr>
+        
+        {% endif %}
         {% endfor %}
     </tbody>
 </thead>

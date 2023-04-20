@@ -214,7 +214,9 @@ def challengeUser(challengee_id):
 @app.route('/runcode',methods=['GET'])
 def runCode():
     
-    
+    a = current_user.challenges_as_challengee.challenger
+    print(a)
+
     # print(current_user.id)
     # challengee_id = 2
     # result = BattleRequests.query.filter(db.and_(BattleRequests.challengee_id==challengee_id,BattleRequests.challenger_id==current_user.id)).all()
@@ -376,9 +378,13 @@ def runCode():
     #     user.setRoster(random_pokemon)
     #     user.saveToDB()
     
+    # all_users = User.query.all()
+    # for user in  all_users:
+    #     user.password = "123"
+    #     user.saveToDB()
     
     # return redirect(url_for('homePage'))
-    return redirect(url_for('myProfilePage'))
+    return redirect(url_for('showProfiles'))
     
 
 
@@ -386,7 +392,7 @@ def runCode():
 @login_required
 def showProfiles():
     all_users = User.query.all()
-    return render_template('profile_explorer.html',all_users=all_users)
+    return render_template('profile_explorer.html',all_users=all_users,BattleRequests=BattleRequests)
 
 @app.route('/profiles/<int:user_id>')
 @login_required
